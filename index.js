@@ -1,9 +1,22 @@
-const express = require('express')
-const app = express()
+const express = require("express");
+const app = express();
 const PORT = process.env.PORT || 3000
+const mongoose = require("mongoose")
+const routes = require("./routes/index.js")
 
-app.get('/', (req, res) =>{
-    res.json({message: 'Hello world'})
-})
+app.use(express.urlencoded({ extended: true }))
 
-app.listen(PORT)
+const connectDB = async () => {
+  await mongoose.connect("mongodb+srv://admin:admin@cluster0.rrcyu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+  });
+  console.log('Connect to database successfully')
+}
+connectDB()
+
+routes(app)
+
+app.listen(PORT);
