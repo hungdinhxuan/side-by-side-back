@@ -6,6 +6,6 @@ const renterController = require('../controllers/renters')
 
 router.get('/', renterController.get)
 // router.post('/login', require('../controllers/login'))
-// router.post('/register', renterController.post)
+router.post('/register', renterController.post)
 
 module.exports = router
