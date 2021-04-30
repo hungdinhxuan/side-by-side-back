@@ -12,7 +12,14 @@ class RenterController
         })
     }
     post(req, res, next){
-
+        renters.create({username: req.body.username, password: req.body.password})
+        .then(renter =>{
+            res.json(`Created ${renter}`)
+        })
+        .catch(err =>{
+            res.json(err)
+        })
+        
     }
     update(req, res, next){
 
