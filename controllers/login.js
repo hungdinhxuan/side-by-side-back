@@ -3,8 +3,8 @@ const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
-// const privateKey = fs.readFileSync("./keys/key.pem");
-// const publicKey = fs.readFileSync("./keys/public.pem");
+const privateKey = fs.readFileSync("./keys/key.pem");
+const publicKey = fs.readFileSync("./keys/public.pem");
 
 module.exports = (req, res, next) => {
   passport.authenticate("local", (err, renter) => {
