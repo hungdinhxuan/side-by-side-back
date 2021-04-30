@@ -4,7 +4,8 @@ const PORT = process.env.PORT || 3000
 const mongoose = require("mongoose")
 const routes = require("./routes/index.js")
 const authentication = require('./authentication')
-
+const atlasDB = "mongodb+srv://admin:admin@cluster0.rrcyu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+const localDB = "mongodb://localhost:27017/SideBySideDB"
 
 
 authentication(app)
@@ -15,7 +16,7 @@ app.use(express.urlencoded({ extended: true }))
 // atlas: mongodb+srv://admin:admin@cluster0.rrcyu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 // 
 const connectDB = async () => {
-  await mongoose.connect("mongodb://localhost:27017/SideBySideDB", {
+  await mongoose.connect(atlasDB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
