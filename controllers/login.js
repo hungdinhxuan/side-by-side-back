@@ -2,7 +2,9 @@ const renters = require("../models/renters");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
-const {privateKey, publicKey} = require("../keys")
+const fs = require("fs")
+const privateKey = fs.readFileSync('./key.pem')
+const publicKey = fs.readFileSync('./public.pem')
 
 module.exports = (req, res, next) => {
   passport.authenticate("local", (err, renter) => {
