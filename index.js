@@ -31,7 +31,7 @@ app.get(
   "/auth/facebook",
   passport.authenticate("facebook", {
     authType: "reauthenticate",
-    scope: ["user_friends", "manage_pages"],
+    scope: ["user_friends"],
   })
 );
 
