@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const bcrypt = require('bcryptjs')
+const mongoose_delete = require('mongoose-delete');
 
 const RenterSchema = new Schema({
     username: {type: String, required: true, unique: true},
@@ -8,7 +9,9 @@ const RenterSchema = new Schema({
     privateQuestions: {type: String},
     privateAnswer: {type: String},
 
-})
+}, {timestamps: true})
+
+RenterSchema.plugin(mongoose_delete)
 
 RenterSchema.pre('save', async function(next){
     try {

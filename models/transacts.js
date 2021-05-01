@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-
+const mongoose_delete = require('mongoose-delete');
 
 const TransactSchema = new Schema({
     renterID: {type: String, required: true},
@@ -10,7 +10,8 @@ const TransactSchema = new Schema({
     status: {type: String},
     time: {type: Date},
 
-})
+}, {timestamps: true})
 
+TransactSchema.plugin(mongoose_delete)
 
 module.exports = mongoose.model('transacts', TransactSchema)
