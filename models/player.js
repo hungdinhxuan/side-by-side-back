@@ -9,6 +9,7 @@ const PlayerSchema = new Schema({
     sex: {type: String},
     city: {type: String},
     nation: {type: String},
+    price: {type: Number},
     renterId: {type: String}
 
 })

@@ -22,10 +22,14 @@ class RenterController
         
     }
     update(req, res, next){
-
+        
     }
     delete(req, res, next){
-
+        renters.deleteOne({_id: req.id})
+        .then(renter =>{res.json({success: `Deleted ${renter}`})})
+        .catch(err=>{
+            res.json({error: 'Server error'})
+        })
     }
 }
 

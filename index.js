@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }))
 // atlas: mongodb+srv://admin:admin@cluster0.rrcyu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 // 
 const connectDB = async () => {
-  await mongoose.connect(atlasDB, {
+  await mongoose.connect(localDB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
@@ -25,9 +25,13 @@ const connectDB = async () => {
 
 connectDB()
 authentication(app)
+
+
 app.get('/', (req, res) => {
   res.json('Hello world')
 })
+
+
 routes(app)
 
 app.listen(PORT);

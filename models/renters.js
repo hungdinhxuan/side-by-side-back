@@ -23,4 +23,8 @@ RenterSchema.pre('save', async function(next){
     }
 })
 
-module.exports = mongoose.model('renters', RenterSchema)
+
+
+const renters = mongoose.model('renters', RenterSchema)
+
+module.exports = renters
