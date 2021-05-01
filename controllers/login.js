@@ -1,13 +1,9 @@
-const renters = require("../models/renters");
-const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
-const fs = require("fs")
-const path = require('path')
-const privateKey = fs.readFileSync(path.join(__dirname,  '../keys/key.pem'))
-const publicKey = fs.readFileSync(path.join(__dirname,  '../keys/public.pem'))
+const { privateKey } = require("../keys")
 
 module.exports = (req, res, next) => {
+  console.log(req.body)
   passport.authenticate("local", (err, renter) => {
     if (err) res.json("Loi server");
     if (!renter) res.json("Username or password is not correct");
@@ -15,6 +11,7 @@ module.exports = (req, res, next) => {
       const token = jwt.sign({ id: renter._id }, privateKey, {
         algorithm: "RS256",
       });
+      res.cookie('token', token)
       res.json({ token: token });
       
     }

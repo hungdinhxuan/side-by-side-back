@@ -45,4 +45,4 @@ class WallController {
   }
 }
 
-module.exports = new wallController();
+module.exports = new WallController();
