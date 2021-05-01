@@ -12,9 +12,9 @@ module.exports = (app) => {
   });
 
   passport.deserializeUser(function (id, done) {
-    User.findById(id, function (err, user) {
+    
       done(err, user);
-    });
+  
   });
   passport.use(
     new LocalStrategy(function (username, password, done) {
@@ -32,4 +32,6 @@ module.exports = (app) => {
       });
     })
   );
+
+
 };

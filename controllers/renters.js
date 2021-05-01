@@ -12,7 +12,7 @@ class RenterController
         })
     }
     post(req, res, next){
-        renters.create({username: req.body.username, password: req.body.password})
+        renters.create({username: req.body.username, password: req.body.password, privateQuestion: req.body.privateQuestion, privateAnswer: req.body.privateAnswer})
         .then(renter =>{
             res.json(`Created ${renter}`)
         })
