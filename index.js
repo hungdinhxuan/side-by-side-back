@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }))
 // atlas: mongodb+srv://admin:admin@cluster0.rrcyu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 // 
 const connectDB = async () => {
-  await mongoose.connect(localDB, {
+  await mongoose.connect(atlasDB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
