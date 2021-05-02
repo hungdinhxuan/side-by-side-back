@@ -19,7 +19,7 @@ module.exports = (app) => {
       {
         clientID: "1707966096067858",
         clientSecret: "8f67fb5c398f86a6b3b40b2d8825ab56",
-        callbackURL: "https://b4e0cbe29e56.ngrok.io/auth/facebook/callback",
+        callbackURL: "https://side-by-side-back.vercel.app/auth/facebook/callback",
         profileFields: ["id", "displayName", "photos", "email"],
       },
 
