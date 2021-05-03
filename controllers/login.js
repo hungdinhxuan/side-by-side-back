@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
 
   passport.authenticate("local", (err, renter) => {
     if (err) res.json({error: 'Server error'});
-    if (!renter) res.status(401).json({err: 'Username or password incorrect'});
+    if (!renter) res.status(401).json([{err: 'Username or password incorrect'}]);
     else {
       const token = jwt.sign({ id: renter._id }, privateKey, {
         algorithm: "RS256",
