@@ -10,23 +10,24 @@ const atlasDB =
   "mongodb+srv://admin:admin@cluster0.rrcyu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const localDB = "mongodb://localhost:27017/SideBySideDB";
 const cookieParser = require("cookie-parser");
-const passport = require("passport");
-const session = require('express-session')
+const session = require("express-session");
 const logger = require("morgan");
 
-app.use(session({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }
-}))
-app.use(logger("dev"))
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  })
+);
+
+app.use(logger("dev"));
 app.use(cookieParser());
-app.use(express.json())
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// atlas: mongodb+srv://admin:admin@cluster0.rrcyu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
-//
+
 const connectDB = async () => {
   await mongoose.connect(atlasDB, {
     useNewUrlParser: true,
@@ -38,29 +39,9 @@ const connectDB = async () => {
 };
 
 connectDB();
-
 localAuthentication(app);
 facebookAuthentication(app);
 googleAuthentication(app);
-
-app.get(
-  "/auth/facebook",
-  passport.authenticate("facebook", {
-    authType: "reauthenticate",
-    scope: ["user_friends"],
-  })
-);
-
-
-
-app.get(
-  "/auth/facebook/callback",
-  passport.authenticate("facebook", { failureRedirect: "/login" }),
-  function (req, res) {
-    // Successful authentication, redirect home.
-    res.json(req.user)
-  }
-);
 
 app.get("/", (req, res) => {
   res.json(req.user);
