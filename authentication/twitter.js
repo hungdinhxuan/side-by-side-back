@@ -5,8 +5,8 @@ module.exports = (app) => {
   passport.use(
     new TwitterStrategy(
       {
-        consumerKey: TWITTER_CONSUMER_KEY,
-        consumerSecret: TWITTER_CONSUMER_SECRET,
+        consumerKey: 'TWITTER_CONSUMER_KEY',
+        consumerSecret: 'TWITTER_CONSUMER_SECRET',
         callbackURL: "http://www.example.com/auth/twitter/callback",
       },
       function (token, tokenSecret, profile, done) {
