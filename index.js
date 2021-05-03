@@ -12,7 +12,10 @@ const localDB = "mongodb://localhost:27017/SideBySideDB";
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const logger = require("morgan");
+const cors = require('cors')
 
+app.use(cors())
+app.options('*', cors())
 app.use(
   session({
     secret: "keyboard cat",
