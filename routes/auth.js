@@ -30,7 +30,7 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   function (req, res) {
-    res.redirect("/");
+    res.json(req.user);
   }
 );
 
