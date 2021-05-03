@@ -38,7 +38,7 @@ router.get(
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google"),
   function (req, res) {
     renters
       .create({
@@ -46,9 +46,9 @@ router.get(
         password: Math.random().toString(),
       })
       .then((renter) => {
-        res.json(`Craeted ${renter}`);
+        res.json({sucess: `Craeted ${renter}`});
       })
-      .catch((err) => {res.json('User existed')});
+      .catch((err) => {res.json({error: 'User existed'})});
   }
 );
 

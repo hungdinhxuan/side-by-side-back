@@ -16,6 +16,7 @@ const cors = require('cors')
 
 app.use(cors())
 app.options('*', cors())
+
 app.use(
   session({
     secret: "keyboard cat",
