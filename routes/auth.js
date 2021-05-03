@@ -24,8 +24,8 @@ router.get(
       .then((renter) => {
         res.json(`Craeted ${renter}`);
       })
-      .catch((err) => {});
-    res.redirect("/");
+      .catch((err) => {res.json('User existed')});
+
   }
 );
 
@@ -48,8 +48,7 @@ router.get(
       .then((renter) => {
         res.json(`Craeted ${renter}`);
       })
-      .catch((err) => {});
-    res.redirect("/");
+      .catch((err) => {res.json('User existed')});
   }
 );
 
