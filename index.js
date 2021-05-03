@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: false }));
 
 
 const connectDB = async () => {
-  await mongoose.connect(atlasDB, {
+  await mongoose.connect(localDB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
