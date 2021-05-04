@@ -6,6 +6,8 @@ const jwt = require("jsonwebtoken");
 const { privateKey, frontendHost } = require("../config");
 const url = require("url");
 
+const test = 'adu vip'
+
 router.get(
   "/facebook",
   passport.authenticate("facebook", {
