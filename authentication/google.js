@@ -11,7 +11,7 @@ module.exports = (app) => {
       {
         clientID: '549866172650-o632qga06fhb7bodb723dm4mmnb252g5.apps.googleusercontent.com',
         clientSecret: '6ejLJkexWQwpXcN2N9XMJTyJ',
-        callbackURL: "http://localhost:3001/auth/google/callback",
+        callbackURL: "http://localhost:3000/auth/google/callback",
       },
       function (accessToken, refreshToken, profile, done) {
           return done(null, profile);
