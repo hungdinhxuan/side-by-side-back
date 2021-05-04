@@ -6,6 +6,7 @@ const frontendHost = 'http://localhost:3000'
 const atlasDB =
   "mongodb+srv://admin:admin@cluster0.rrcyu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const localDB = "mongodb://localhost:27017/SideBySideDB";
+const test = 'require'
 
 module.exports = {
     privateKey, publicKey, frontendHost, atlasDB, localDB
