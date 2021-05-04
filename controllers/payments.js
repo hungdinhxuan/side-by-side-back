@@ -24,7 +24,7 @@ class PaymentController {
         paymentId: req.body.paymentId,
       })
       .then((payment) => {
-        res.json(`Created ${payment}`);
+        res.json({sucess:`Created ${payment}`});
       })
       .catch((err) => {
         res.json(err);

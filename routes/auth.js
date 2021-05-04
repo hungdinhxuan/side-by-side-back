@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
+const renters = require("../models/renters");
 
 router.get(
   "/facebook",
@@ -15,7 +16,16 @@ router.get(
   passport.authenticate("facebook"),
   function (req, res) {
     // Successful authentication, redirect home.
-    res.json(req.user);
+    renters
+      .create({
+        username: "facebook_" + req.user.id,
+        password: Math.random().toString(),
+      })
+      .then((renter) => {
+        res.json(`Craeted ${renter}`);
+      })
+      .catch((err) => {res.json('User existed')});
+
   }
 );
 
@@ -28,9 +38,17 @@ router.get(
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google"),
   function (req, res) {
-    res.json(req.user);
+    renters
+      .create({
+        username: "google_" + req.user.id,
+        password: Math.random().toString(),
+      })
+      .then((renter) => {
+        res.json({sucess: `Craeted ${renter}`});
+      })
+      .catch((err) => {res.json({error: 'User existed'})});
   }
 );
 
