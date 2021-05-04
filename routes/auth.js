@@ -4,6 +4,7 @@ const passport = require("passport");
 const renters = require("../models/renters");
 const jwt = require("jsonwebtoken");
 const { privateKey, frontendHost } = require("../config");
+const url = require("url");
 
 router.get(
   "/facebook",
@@ -27,7 +28,14 @@ router.get(
         const token = jwt.sign({ id: renter._id }, privateKey, {
           algorithm: "RS256",
         });
-        res.send(`${frontendHost}/streamer`, { token });
+        res.redirect(
+          url.format({
+            pathname: frontendHost,
+            query: {
+              token,
+            },
+          })
+        );
       })
       .catch((err) => {
         renters
@@ -37,15 +45,34 @@ router.get(
               const token = jwt.sign({ id: renter._id }, privateKey, {
                 algorithm: "RS256",
               });
-              res.send(`${frontendHost}/streamer`, { token });
-            }
-            else
-            {
-              res.status(500).send(`${frontendHost}/streamer`, { error:  'Server error'});
+              res.redirect(
+                url.format({
+                  pathname: frontendHost,
+                  query: {
+                    token,
+                  },
+                })
+              );
+            } else {
+              res.redirect(
+                url.format({
+                  pathname: frontendHost,
+                  query: {
+                    error: "Server error",
+                  },
+                })
+              );
             }
           })
           .catch((err2) => {
-            res.status(500).send(`${frontendHost}/streamer`, { error:  'Server error'});
+            res.redirect(
+              url.format({
+                pathname: frontendHost,
+                query: {
+                  error: "Server error",
+                },
+              })
+            );
           });
       });
   }
@@ -68,10 +95,24 @@ router.get(
         password: Math.random().toString(),
       })
       .then((renter) => {
-        res.json({ sucess: `Craeted ${renter}` });
+        res.redirect(
+          url.format({
+            pathname: frontendHost,
+            query: {
+              token,
+            },
+          })
+        );
       })
       .catch((err) => {
-        res.json({ error: "User existed" });
+        res.redirect(
+          url.format({
+            pathname: frontendHost,
+            query: {
+              token,
+            },
+          })
+        );
       });
   }
 );
