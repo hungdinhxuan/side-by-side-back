@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const renters = require("../models/renters");
+const jwt = require('jsonwebtoken');
+const { privateKey, frontendHost } = require("../config");
 
 router.get(
   "/facebook",
@@ -22,9 +24,23 @@ router.get(
         password: Math.random().toString(),
       })
       .then((renter) => {
-        res.json(`Craeted ${renter}`);
+        const token = jwt.sign({ id: renter._id }, privateKey, {
+          algorithm: "RS256",
+        });
+        res.send(`${frontendHost}/streamer`, {token})
       })
-      .catch((err) => {res.json('User existed')});
+      .catch(err => {
+        renters.findOne({ username: "facebook_" + req.user.id})
+        .then(renter =>{
+          const token = jwt.sign({ id: renter._id }, privateKey, {
+            algorithm: "RS256",
+          });
+          res.send(`${frontendHost}/streamer`, {token})
+        })
+        .catch(err2 => {
+          res.status(500).json({error: 'Server error'})
+        })
+      });
 
   }
 );
