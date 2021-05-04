@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const renters = require("../models/renters");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const { privateKey, frontendHost } = require("../config");
 
 router.get(
@@ -27,21 +27,27 @@ router.get(
         const token = jwt.sign({ id: renter._id }, privateKey, {
           algorithm: "RS256",
         });
-        res.send(`${frontendHost}/streamer`, {token})
+        res.send(`${frontendHost}/streamer`, { token });
       })
-      .catch(err => {
-        renters.findOne({ username: "facebook_" + req.user.id})
-        .then(renter =>{
-          const token = jwt.sign({ id: renter._id }, privateKey, {
-            algorithm: "RS256",
+      .catch((err) => {
+        renters
+          .findOne({ username: "facebook_" + req.user.id })
+          .then((renter) => {
+            if (renter) {
+              const token = jwt.sign({ id: renter._id }, privateKey, {
+                algorithm: "RS256",
+              });
+              res.send(`${frontendHost}/streamer`, { token });
+            }
+            else
+            {
+              res.status(500).send(`${frontendHost}/streamer`, { error:  'Server error'});
+            }
+          })
+          .catch((err2) => {
+            res.status(500).send(`${frontendHost}/streamer`, { error:  'Server error'});
           });
-          res.send(`${frontendHost}/streamer`, {token})
-        })
-        .catch(err2 => {
-          res.status(500).json({error: 'Server error'})
-        })
       });
-
   }
 );
 
@@ -62,9 +68,11 @@ router.get(
         password: Math.random().toString(),
       })
       .then((renter) => {
-        res.json({sucess: `Craeted ${renter}`});
+        res.json({ sucess: `Craeted ${renter}` });
       })
-      .catch((err) => {res.json({error: 'User existed'})});
+      .catch((err) => {
+        res.json({ error: "User existed" });
+      });
   }
 );
 
