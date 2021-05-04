@@ -25,6 +25,7 @@ router.get(
         password: Math.random().toString(),
       })
       .then((renter) => {
+        console.log("Run then 1");
         const token = jwt.sign({ id: renter._id }, privateKey, {
           algorithm: "RS256",
         });
@@ -105,14 +106,42 @@ router.get(
         );
       })
       .catch((err) => {
-        res.redirect(
-          url.format({
-            pathname: frontendHost,
-            query: {
-              token,
-            },
+        renters
+          .findOne({ username: "google_" + req.user.id })
+          .then((renter) => {
+            if (renter) {
+              const token = jwt.sign({ id: renter._id }, privateKey, {
+                algorithm: "RS256",
+              });
+              res.redirect(
+                url.format({
+                  pathname: frontendHost,
+                  query: {
+                    token,
+                  },
+                })
+              );
+            } else {
+              res.redirect(
+                url.format({
+                  pathname: frontendHost,
+                  query: {
+                    error: "Server error",
+                  },
+                })
+              );
+            }
           })
-        );
+          .catch((err2) => {
+            res.redirect(
+              url.format({
+                pathname: frontendHost,
+                query: {
+                  error: "Server error",
+                },
+              })
+            );
+          });
       });
   }
 );
