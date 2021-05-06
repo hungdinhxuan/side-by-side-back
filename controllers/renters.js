@@ -8,16 +8,16 @@ class RenterController
             res.json(renter)
         })
         .catch(err =>{
-            res.status(500).json({err})
+            res.status(406).json({err})
         })
     }
     post(req, res, next){
         renters.create({username: req.body.username, password: req.body.password, privateQuestion: req.body.privateQuestion, privateAnswer: req.body.privateAnswer})
         .then(renter =>{
-            res.json({success: true})
+            res.status(201).json({success: true})
         })
         .catch(err =>{
-            res.status(500).json({err: 'User is existed'})
+            res.status(406).json({err: 'User is existed'})
         })
         
     }
@@ -28,7 +28,7 @@ class RenterController
         renters.deleteOne({_id: req.id})
         .then(renter =>{res.json({success: `Deleted ${renter}`})})
         .catch(err=>{
-            res.json({error: 'Server error'})
+            res.status(406).json({error: 'Server error'})
         })
     }
 }
