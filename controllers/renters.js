@@ -14,10 +14,10 @@ class RenterController
     post(req, res, next){
         renters.create({username: req.body.username, password: req.body.password, privateQuestion: req.body.privateQuestion, privateAnswer: req.body.privateAnswer})
         .then(renter =>{
-            res.json(`Created ${renter}`)
+            res.json({success: true})
         })
         .catch(err =>{
-            res.json(err)
+            res.status(500).json({err: 'User is existed'})
         })
         
     }
