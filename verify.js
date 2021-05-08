@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 module.exports = (req, res, next) => {
     jwt.verify(req.cookies.token, publicKey , function(err, decoded) {
         if (err) {
-          res.json(err)
+          res.status(403).json({error: 'Token is invalid'})
         }
         else
         {

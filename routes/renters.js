@@ -5,9 +5,6 @@ const path = require('path')
 const verify = require('../verify')
 
 router.get('/', verify, renterController.get)
-router.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '../loginTest.html'))
-})
 router.post('/login', require('../controllers/login'))
 router.post('/register', renterController.post)
 
