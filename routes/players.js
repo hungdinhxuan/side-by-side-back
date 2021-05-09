@@ -40,6 +40,6 @@ router.get("/create", (req, res) => {
 });
 
 router.get('/destroy', playersController.destroy)
-router.get('/', playersController.get)
+router.get('/',verify, playersController.get)
 
 module.exports = router;
