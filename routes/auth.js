@@ -2,6 +2,10 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const renters = require("../models/renters");
+const jwt = require("jsonwebtoken");
+const { privateKey, frontendHost } = require("../config");
+const url = require("url");
+
 
 router.get(
   "/facebook",
@@ -22,10 +26,57 @@ router.get(
         password: Math.random().toString(),
       })
       .then((renter) => {
-        res.json(`Craeted ${renter}`);
+        console.log("Run then 1");
+        const token = jwt.sign({ id: renter._id }, privateKey, {
+          algorithm: "RS256",
+        });
+        res.redirect(
+          url.format({
+            pathname: frontendHost,
+            query: {
+              token,
+            },
+          })
+        );
       })
-      .catch((err) => {res.json('User existed')});
-
+      .catch((err) => {
+        renters
+          .findOne({ username: "facebook_" + req.user.id })
+          .then((renter) => {
+            if (renter) {
+              const token = jwt.sign({ id: renter._id }, privateKey, {
+                algorithm: "RS256",
+              });
+              res.redirect(
+                url.format({
+                  pathname: frontendHost,
+                  query: {
+                    token,
+                  },
+                })
+              );
+            } else {
+              res.redirect(
+                url.format({
+                  pathname: frontendHost,
+                  query: {
+                    error: "Server error",
+                  },
+                })
+              );
+            }
+          })
+          .catch((err2) => {
+            res.redirect(
+              url.format({
+                pathname: frontendHost,
+                query: {
+                  error: "Server error",
+                },
+              })
+            );
+          });
+      });
   }
 );
 
@@ -46,9 +97,53 @@ router.get(
         password: Math.random().toString(),
       })
       .then((renter) => {
-        res.json({sucess: `Craeted ${renter}`});
+        res.redirect(
+          url.format({
+            pathname: frontendHost,
+            query: {
+              token,
+            },
+          })
+        );
       })
-      .catch((err) => {res.json({error: 'User existed'})});
+      .catch((err) => {
+        renters
+          .findOne({ username: "google_" + req.user.id })
+          .then((renter) => {
+            if (renter) {
+              const token = jwt.sign({ id: renter._id }, privateKey, {
+                algorithm: "RS256",
+              });
+              res.redirect(
+                url.format({
+                  pathname: frontendHost,
+                  query: {
+                    token,
+                  },
+                })
+              );
+            } else {
+              res.redirect(
+                url.format({
+                  pathname: frontendHost,
+                  query: {
+                    error: "Server error",
+                  },
+                })
+              );
+            }
+          })
+          .catch((err2) => {
+            res.redirect(
+              url.format({
+                pathname: frontendHost,
+                query: {
+                  error: "Server error",
+                },
+              })
+            );
+          });
+      });
   }
 );
 

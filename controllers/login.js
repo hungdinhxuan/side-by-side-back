@@ -1,6 +1,6 @@
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
-const { privateKey } = require("../keys");
+const { privateKey } = require("../config");
 
 module.exports = (req, res, next) => {
   console.log(req.body);

@@ -1,18 +1,16 @@
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const mongoose = require("mongoose");
 const routes = require("./routes/index.js");
 const localAuthentication = require("./authentication/local");
 const facebookAuthentication = require("./authentication/facebook");
 const googleAuthentication = require("./authentication/google");
-const atlasDB =
-  "mongodb+srv://admin:admin@cluster0.rrcyu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-const localDB = "mongodb://localhost:27017/SideBySideDB";
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const logger = require("morgan");
 const cors = require('cors')
+const {atlasDB, localDB} = require('./config')
 
 app.use(cors())
 app.options('*', cors())
@@ -55,6 +53,9 @@ app.get("/home", (req, res) => {
   res.json(req.user);
 });
 
+
 routes(app);
+
+
 
 app.listen(PORT);
