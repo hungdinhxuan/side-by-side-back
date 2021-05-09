@@ -45,7 +45,7 @@ class PlayerController {
         res.json({ success: `Deleted ${player}` });
       })
       .catch((err) => {
-        res.json({ error: "Server error" });
+        res.status(500).json({ err });
       });
   }
 }
