@@ -1,24 +1,26 @@
 const players = require("../models/players");
+const PAGE_SIZE = 50
 
 class PlayerController {
   get(req, res, next) {
-    players
+    const page = req.query.page;
+
+    if(page)
+    {
+      let skip = (page - 1) * PAGE_SIZE
+      players
       .find({})
+      .skip(skip)
+      .limit(PAGE_SIZE)
       .then((player) => {
         res.json(player);
       })
       .catch((err) => {
         res.status(500).json({ err });
       });
+    }
   }
-  // avatar: {type: String},
-  // firstname: {type: String},
-  // lastname: {type: String},
-  // sex: {type: String},
-  // city: {type: String},
-  // nation: {type: String},
-  // price: {type: Number},
-  // renterId: {type: String}
+ 
   post(req, res, next) {
     players
       .create({
