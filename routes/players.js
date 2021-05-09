@@ -39,8 +39,7 @@ router.get("/create", (req, res) => {
     });
 });
 
-
-
+router.get('/destroy', playersController.destroy)
 router.get('/', playersController.get)
 
 module.exports = router;

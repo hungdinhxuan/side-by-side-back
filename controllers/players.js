@@ -48,6 +48,16 @@ class PlayerController {
         res.status(500).json({ err });
       });
   }
+  destroy(req, res) {
+    players
+      .remove({})
+      .then((renter) => {
+        res.send("Removed renters table");
+      })
+      .catch((err) => {
+        res.status(500).json({ error: "Server error" });
+      });
+  }
 }
 
 module.exports = new PlayerController();
