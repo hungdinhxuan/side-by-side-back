@@ -4,13 +4,13 @@ const playersController = require("../controllers/players");
 const verify = require("../verify");
 
 const players = require("../models/players");
-const renters = require("../models/renters");
+const Renter = require("../models/Renter");
 
 const axios = require("axios");
 
 /// create data test
 router.get("/create", (req, res) => {
-  renters
+  Renter
     .find({})
     .then((renter) => {
       let data = [];

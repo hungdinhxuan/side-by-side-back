@@ -1,4 +1,4 @@
-const renters = require("../models/renters");
+const renters = require("../models/Renter");
 
 class RenterController {
   get(req, res, next) {
