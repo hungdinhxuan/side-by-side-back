@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const renterController = require('../controllers/renters')
 const path = require('path')
-const verify = require('../verify')
+const verify = require('../middleware/verify')
 const renters = require('../models/Renter')
 
 router.get('/', verify, renterController.get)

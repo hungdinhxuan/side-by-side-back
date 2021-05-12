@@ -1,4 +1,4 @@
-const follows = require("../models/follows");
+const follows = require("../models/Follow");
 
 class FollowController {
   get(req, res, next) {

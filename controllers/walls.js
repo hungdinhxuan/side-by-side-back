@@ -1,4 +1,4 @@
-const walls = require("../models/walls");
+const walls = require("../models/Wall");
 
 class WallController {
   get(req, res, next) {

@@ -1,4 +1,4 @@
-const players = require("../models/players");
+const players = require("../models/Player");
 const PAGE_SIZE = 50
 
 class PlayerController {

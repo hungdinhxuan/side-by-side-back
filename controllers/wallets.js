@@ -1,4 +1,4 @@
-const wallets = require("../models/wallets");
+const wallets = require("../models/Wallet");
 
 class WalletController {
   get(req, res, next) {

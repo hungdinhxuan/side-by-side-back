@@ -1,15 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const playersController = require("../controllers/players");
-const verify = require("../verify");
+const verify = require("../middleware/verify");
 
-const players = require("../models/players");
+const players = require("../models/Player");
 const Renter = require("../models/Renter");
 
 const axios = require("axios");
 
-/// create data test
-router.get("/create", (req, res) => {
+// @route GET /api/player/create
+// @desc create sample players
+// @access private
+router.get("/create", verify, (req, res) => {
   Renter
     .find({})
     .then((renter) => {
@@ -35,24 +37,27 @@ router.get("/create", (req, res) => {
                   data.push(player);
                 })
                 .catch((err) => {
-                  res.status(500).json({ err });
+                  return res.status(500).json({ success: false, message: err});
                 });
             }
           })
           .catch(function (error) {
             // handle error
-            console.log(error);
+            return res.status(500).json({ success: false, message: 'Internal Server Error'});
           });
       }
 
-      res.json(data);
+      return res.json(data);
     })
     .catch((err) => {
-      res.status(500).json({ err });
+      return res.status(500).json({ success: false, message: 'Internal Server Error'});
     });
 });
 
-router.get("/destroy", playersController.destroy);
+// @route GET /api/player/destroy
+// @desc destroy all players
+// @access private
+router.get("/destroy", verify, playersController.destroy);
 router.get("/", playersController.get);
 
 module.exports = router;

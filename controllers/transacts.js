@@ -1,4 +1,4 @@
-const transacts = require("../models/transacts");
+const transacts = require("../models/Transact");
 
 // renterID: {type: String, required: true},
 //     playerID: {type: String, required: true},
