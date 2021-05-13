@@ -31,7 +31,7 @@ router.get("/create",  (req, res) => {
                   city: "Ho Chi Minh",
                   nation: "Viet Nam",
                   price: 50000,
-                  renterId: renter[i]._id,
+                  renterId: renter[j]._id,
                 })
                 .then((player) => {
                   data.push(player);
