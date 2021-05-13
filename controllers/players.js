@@ -10,6 +10,7 @@ class PlayerController {
       let skip = (page - 1) * PAGE_SIZE
       players
       .find({})
+      .populate('renters', ['username'])
       .skip(skip)
       .limit(PAGE_SIZE)
       .then((player) => {
