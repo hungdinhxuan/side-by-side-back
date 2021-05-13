@@ -57,7 +57,7 @@ router.get("/create", verify, (req, res) => {
 // @route GET /api/player/destroy
 // @desc destroy all players
 // @access private
-router.get("/destroy", verify, playersController.destroy);
+router.get("/destroy",  playersController.destroy);
 router.get("/", playersController.get);
 
 module.exports = router;
