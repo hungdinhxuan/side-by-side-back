@@ -13,7 +13,7 @@ const cors = require('cors')
 const {atlasDB, localDB} = require('./config')
 
 app.use(cors())
-app.options('*', cors())
+
 
 app.use(
   session({
