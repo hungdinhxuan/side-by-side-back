@@ -54,8 +54,8 @@ class PlayerController {
   destroy(req, res) {
     players
       .remove({})
-      .then((renter) => {
-        res.send("Removed renters table");
+      .then((player) => {
+        res.send("Removed players table");
       })
       .catch((err) => {
         res.status(500).json({ error: "Server error" });

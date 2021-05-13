@@ -11,7 +11,7 @@ const axios = require("axios");
 // @route GET /api/player/create
 // @desc create sample players
 // @access private
-router.get("/create", verify, (req, res) => {
+router.get("/create",  (req, res) => {
   Renter
     .find({})
     .then((renter) => {

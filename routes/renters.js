@@ -8,14 +8,16 @@ const renters = require('../models/Renter')
 router.get('/', verify, renterController.get)
 router.post('/login', require('../controllers/login'))
 router.post('/register', renterController.post)
-router.get('/create', (req, res) =>{
+router.get('/create', async (req, res) =>{
     
     for(var i = 0; i < 500; i++){
-        renters.create({username: `renter${i}`, password: 'renter'})
-        .then(renter => {})
-        .catch(err => {res.status(500).json({err})})
+        try {
+            const renter = await renters.create({username: `renter${i}`, password: 'renter'})   
+        } catch (error) {
+            res.status(500).json({success: false, message: 'Internal server error', error})
+        }
     }
-    res.json('Create successful')
+    return res.json({success: true, message: `Created successfully`})
 })
 
 router.get('/destroy', renterController.destroy)
