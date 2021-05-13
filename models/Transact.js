@@ -3,8 +3,8 @@ const Schema = mongoose.Schema
 const mongoose_delete = require('mongoose-delete');
 
 const TransactSchema = new Schema({
-    renterID: {type: Schema.Types.ObjectId, required: true, ref='renters'},
-    playerID: {type: Schema.Types.ObjectId, required: true, ref='players'},
+    renterID: {type: Schema.Types.ObjectId, required: true, ref:'renters'},
+    playerID: {type: Schema.Types.ObjectId, required: true, ref:'players'},
     amount: {type: Number},
     rentedHours: {type: Number},
     status: {type: String},
