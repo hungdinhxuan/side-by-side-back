@@ -1,38 +1,36 @@
-const players = require("../models/Player");
-const PAGE_SIZE = 50
+const Player = require("../models/Player");
+const PAGE_SIZE = 50;
 
 class PlayerController {
-  get(req, res, next) {
+  async get(req, res, next) {
     const page = req.query.page;
 
-    if(page)
-    {
-      let skip = (page - 1) * PAGE_SIZE
-      players
-      .find({})
-      .populate('renters', ['username'])
-      .skip(skip)
-      .limit(PAGE_SIZE)
-      .then((player) => {
-        res.json(player);
-      })
-      .catch((err) => {
-        res.status(500).json({ err });
-      });
+    if (page) {
+      let skip = (page - 1) * PAGE_SIZE;
+      try {
+        let players = await Player.find({})
+          .skip(skip)
+          .limit(PAGE_SIZE)
+          .populate('renterId', ['username'])
+        res.json(players);
+      } catch (error) {
+        res
+          .status(500)
+          .json({ success: false, message: "Internal Server Error" });
+      }
     }
   }
- 
+
   post(req, res, next) {
-    players
-      .create({
-        avatar: req.body.avatar,
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        sex: req.body.sex,
-        city: req.body.city,
-        nation: req.body.nation,
-        renterId: req.body.renterID,
-      })
+    Player.create({
+      avatar: req.body.avatar,
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
+      sex: req.body.sex,
+      city: req.body.city,
+      nation: req.body.nation,
+      renterId: req.body.renterID,
+    })
       .then((player) => {
         res.json(`Created ${player}`);
       })
@@ -42,8 +40,7 @@ class PlayerController {
   }
   update(req, res, next) {}
   delete(req, res, next) {
-    players
-      .deleteOne({ _id: req.id })
+    Player.deleteOne({ _id: req.id })
       .then((player) => {
         res.json({ success: `Deleted ${player}` });
       })
@@ -52,10 +49,9 @@ class PlayerController {
       });
   }
   destroy(req, res) {
-    players
-      .remove({})
+    Player.remove({})
       .then((player) => {
-        res.send("Removed players table");
+        res.send("Removed Player table");
       })
       .catch((err) => {
         res.status(500).json({ error: "Server error" });

@@ -31,7 +31,7 @@ router.get("/create",  (req, res) => {
                   city: "Ho Chi Minh",
                   nation: "Viet Nam",
                   price: 50000,
-                  renterId: renter[i].id,
+                  renterId: renter[i]._id,
                 })
                 .then((player) => {
                   data.push(player);
@@ -47,7 +47,7 @@ router.get("/create",  (req, res) => {
           });
       }
 
-      return res.json(data);
+      return res.json({success: true, message: 'Created players'});
     })
     .catch((err) => {
       return res.status(500).json({ success: false, message: 'Internal Server Error'});
