@@ -3,8 +3,8 @@ const Schema = mongoose.Schema
 const mongoose_delete = require('mongoose-delete');
 
 const FollowSchema = new Schema({
-    renterID: {type: String, required: true},
-    playerID: {type: String, required: true},
+    renterID: {type: String, required: true, ref='renters'},
+    playerID: {type: String, required: true, ref='players'},
    
 }, {timestamps: true})
 

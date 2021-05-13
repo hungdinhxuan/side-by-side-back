@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 const mongoose_delete = require('mongoose-delete');
 
 const HistorySchema = new Schema({
-    walletId: {type: String, required: true},
+    walletId: {type: Schema.Types.ObjectId, required: true, ref='wallets'},
     ammount: {type: Number, required: true, default: 0},
     time: {type: Date, required: true},
     methods: {type: String}

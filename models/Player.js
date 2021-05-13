@@ -10,7 +10,7 @@ const PlayerSchema = new Schema({
     city: {type: String},
     nation: {type: String},
     price: {type: Number},
-    renterId: {type: String}
+    renterId: {type: Schema.Types.ObjectId, ref: 'renters'}
 
 }, {timestamps: true})
 
