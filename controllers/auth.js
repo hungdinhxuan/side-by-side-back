@@ -49,7 +49,7 @@ exports.register = async (req, res) => {
   try {
     let renter = await Renter.findOne({ username });
     if (renter) {
-      return res.json({
+      return res.status(406).json({
         success: false,
         message: "Username is already existed",
       });
@@ -57,7 +57,7 @@ exports.register = async (req, res) => {
     renter = await Renter.findOne({ email });
     console.log(renter);
     if (renter) {
-      return res.json({ success: false, message: "Email is already existed" });
+      return res.status(406).json({ success: false, message: "Email is already existed" });
     }
     let newRenter = await Renter.create({ username, email, password, name, gender });
     return res
@@ -103,7 +103,11 @@ exports.forgotPassword = async (req, res) => {
   const {email} = req.body
   try {
     const subject = "Reset your password"
-    const htmlContent = `<h3> Your new password is </h3>`
+    const newPassword = Math.floor(Math.random() * 1000000) + 100000
+    const token = jwt.sign({email}, privateKey, { algorithm: "RS256"})
+    const htmlContent = `<h3> Your new password is ${newPassword}</h3>
+                        <a src="http://localhost:3000/auth/reset-password?token=${token}&password=${newPassword}"}>Click me to accept this change</a>
+                          `
     const response  = await sendMail(email, subject, htmlContent)
   } catch (error) {
     return res
@@ -113,6 +117,6 @@ exports.forgotPassword = async (req, res) => {
 }
 
 
-exports.resetPassword = (req, res) => {
-
+exports.resetPassword = async (req, res) => {
+  const {token, password} = req.query
 }
