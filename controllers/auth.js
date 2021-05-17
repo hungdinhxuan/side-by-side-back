@@ -1,11 +1,51 @@
 const Renter = require("../models/Renter");
-const sendMail = require("../controllers/sendMail")
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const {OAuth2Client} = require('google-auth-library');
+const client = new OAuth2Client(`${process.env.GOOGLE_CLIENT_ID}`)
+const {privateKey} = require('../config')
+const sendMail = require('./sendMail')
+
 require("dotenv").config();
 
+
+exports.googleLogin = async (req, res, next) => {
+  const { tokenId } = req.body;
+  console.log(req.body);
+  try {
+    const response = await client.verifyIdToken({
+      idToken: tokenId,
+      audience: `${process.env.GOOGLE_CLIENT_ID}`,
+    });
+    const { email_verified, name, email, picture } = response.payload;
+    console.log(response.payload)
+    if (email_verified) {
+      let renter = await Renter.findOne({ email });
+      if(!renter){
+        let newRenter = await Renter.create({username: `google_${email}`, password: `${Math.random()}`, email, name})
+      }
+      const token = jwt.sign({ email }, privateKey, {
+        algorithm: "RS256",
+      });
+      return res.json({
+        success: true,
+        message: "Login successful",
+        token,
+      });
+    }
+    return res
+      .status(403)
+      .json({ success: true, message: "Email is not verified" });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: true, message: "Internal Server Error", error: error });
+  }
+};
+
 exports.register = async (req, res) => {
-  const { username, email, password, name } = req.body;
-  console.log(req.body)
+  const { username, email, password, name, gender } = req.body;
+  console.log(req.body);
   try {
     let renter = await Renter.findOne({ username });
     if (renter) {
@@ -15,48 +55,64 @@ exports.register = async (req, res) => {
       });
     }
     renter = await Renter.findOne({ email });
-    console.log(renter)
+    console.log(renter);
     if (renter) {
       return res.json({ success: false, message: "Email is already existed" });
     }
-    
-    let newRenter = await Renter.create({ username, email, password, name })
-
-    const token = jwt.sign({email}, process.env.JWT_ACTIVATE, {expiresIn: '20m'})
-    const htmlContent = `
-    <h2> This email is serve for activate account </h2>
-    <a src="http://localhost:5000/auth/activate/${token}"> Please click the link to activate account</a>                    
-    `
-    const response = await sendMail(email, 'Account Activation Link', htmlContent)
-    return res.status(201).json({ success: true, message: 'Sign up successful !'})
-
+    let newRenter = await Renter.create({ username, email, password, name, gender });
+    return res
+      .status(201)
+      .json({ success: true, message: "Sign up successful !"});
   } catch (error) {
-      res.status(500).json({success: false, message: 'In Server Error'})
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
-exports.activateAccount =  (req, res) => {
-    const {token} = req.body
-    if(token){  
-        jwt.verify(token, process.env.JWT_ACTIVATE, async (err, decoded) => {
-            if(err){
-                return res.status(400).json({success: false, message: 'Token is not valid or expired'})
-            }
-            const {email} = decoded
-            try {
-                const renter = await Renter.findOne({email})
-                if(renter){
+exports.activateAccount = (req, res) => {
+  const { token } = req.body;
+  if (token) {
+    jwt.verify(token, process.env.JWT_ACTIVATE, async (err, decoded) => {
+      if (err) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Token is not valid or expired" });
+      }
+      const { email } = decoded;
+      try {
+        const renter = await Renter.findOne({ email });
+        if (renter) {
+        }
+      } catch (error) {
+        return res
+          .status(500)
+          .json({ success: false, message: "Internal server error" });
+      }
+    });
+  } else {
+    return res
+      .status(403)
+      .json({ success: false, message: "Token is not provide" });
+  }
+};
 
-                }
-            } catch (error) {
-                return res.status(500).json({success: false, message: 'Internal server error'})
-            }
-            
-        })
-    }else{
-        return res.status(403).json({success: false, message:'Token is not provide'})
-    }
- };
+
+exports.forgotPassword = async (req, res) => {
+  /* 
+    This function will send for user a email with link to reset their password
+  */
+  const {email} = req.body
+  try {
+    const subject = "Reset your password"
+    const htmlContent = `<h3> Your new password is </h3>`
+    const response  = await sendMail(email, subject, htmlContent)
+  } catch (error) {
+    return res
+          .status(500)
+          .json({ success: false, message: "Internal server error" });
+  }
+}
 
 
- 
+exports.resetPassword = (req, res) => {
+
+}

@@ -8,6 +8,7 @@ const RenterSchema = new Schema({
     email: {type: String, unique: true, required: true, maxLength: 255},
     password: {type: String, required: true, maxLength: 255},
     name: {type: String, required: true, maxLength: 64},
+    gender: {type: String},
     resetLink: {type: String, default: ''},
     isActive: {type: Boolean, default: false},
 
