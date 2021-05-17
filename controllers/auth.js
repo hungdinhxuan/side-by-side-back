@@ -2,7 +2,7 @@ const Renter = require("../models/Renter");
 const jwt = require("jsonwebtoken");
 const {OAuth2Client} = require('google-auth-library');
 const client = new OAuth2Client(`${process.env.GOOGLE_CLIENT_ID}`)
-const {privateKey} = require('../config')
+const {publicKey, privateKey} = require('../config')
 const sendMail = require('./sendMail')
 
 require("dotenv").config();
@@ -119,4 +119,14 @@ exports.forgotPassword = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
   const {token, password} = req.query
+  try {
+    const email = jwt.verify(token, publicKey)
+    const renter = await Renter.findOneAndUpdate({email}, {password})  
+    return res.json({success: true, message:'Update'})
+  } catch (error) {
+    return res
+    .status(500)
+    .json({ success: false, message: "Internal server error" });
+  }
+  
 }
