@@ -1,12 +1,11 @@
 const Renter = require("../models/Renter");
 const jwt = require("jsonwebtoken");
-const {OAuth2Client} = require('google-auth-library');
-const client = new OAuth2Client(`${process.env.GOOGLE_CLIENT_ID}`)
-const {publicKey, privateKey} = require('../config')
-const sendMail = require('./sendMail')
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(`${process.env.GOOGLE_CLIENT_ID}`);
+const { publicKey, privateKey } = require("../config");
+const sendMail = require("./sendMail");
 
 require("dotenv").config();
-
 
 exports.googleLogin = async (req, res, next) => {
   const { tokenId } = req.body;
@@ -17,11 +16,16 @@ exports.googleLogin = async (req, res, next) => {
       audience: `${process.env.GOOGLE_CLIENT_ID}`,
     });
     const { email_verified, name, email, picture } = response.payload;
-    console.log(response.payload)
+    console.log(response.payload);
     if (email_verified) {
       let renter = await Renter.findOne({ email });
-      if(!renter){
-        let newRenter = await Renter.create({username: `google_${email}`, password: `${Math.random()}`, email, name})
+      if (!renter) {
+        let newRenter = await Renter.create({
+          username: `google_${email}`,
+          password: `${Math.random()}`,
+          email,
+          name,
+        });
       }
       const token = jwt.sign({ email }, privateKey, {
         algorithm: "RS256",
@@ -57,12 +61,20 @@ exports.register = async (req, res) => {
     renter = await Renter.findOne({ email });
     console.log(renter);
     if (renter) {
-      return res.status(406).json({ success: false, message: "Email is already existed" });
+      return res
+        .status(406)
+        .json({ success: false, message: "Email is already existed" });
     }
-    let newRenter = await Renter.create({ username, email, password, name, gender });
+    let newRenter = await Renter.create({
+      username,
+      email,
+      password,
+      name,
+      gender,
+    });
     return res
       .status(201)
-      .json({ success: true, message: "Sign up successful !"});
+      .json({ success: true, message: "Sign up successful !" });
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
@@ -95,38 +107,52 @@ exports.activateAccount = (req, res) => {
   }
 };
 
-
 exports.forgotPassword = async (req, res) => {
   /* 
     This function will send for user a email with link to reset their password
   */
-  const {email} = req.body
+  const { email } = req.body;
+
   try {
-    const subject = "Reset your password"
-    const newPassword = Math.floor(Math.random() * 1000000) + 100000
-    const token = jwt.sign({email}, privateKey, { algorithm: "RS256"})
+    const renter = await Renter.findOne({ email: email });
+    if (!renter) {
+      return res.status(400).json({
+        success: false,
+        message: "This email has not yet registered!!!",
+      });
+    }
+    const subject = "Reset your password";
+    const newPassword = Math.floor(Math.random() * 1000000) + 100000;
+    const token = jwt.sign({ email }, privateKey, { algorithm: "RS256", expiresIn: '1d'});
     const htmlContent = `<h3> Your new password is ${newPassword}</h3>
-                        <a src="http://localhost:3000/auth/reset-password?token=${token}&password=${newPassword}"}>Click me to accept this change</a>
-                          `
-    const response  = await sendMail(email, subject, htmlContent)
+                        <h4> Click on the link below to reset your password </h4>
+                        <p> Click <a href="${process.env.SERVER_HOST}/api/auth/reset-password?token=${token}&password=${newPassword}"> here </a> to reset your password</p>
+                        or copy and paste url below to your browser
+                        ${process.env.SERVER_HOST}/api/auth/reset-password?token=${token}&password=${newPassword}
+                        `;
+    const response = await sendMail(email, subject, htmlContent);
+    return res.json({
+      success: true,
+      message: "Sent email to reset password successful",
+    });
   } catch (error) {
     return res
-          .status(500)
-          .json({ success: false, message: "Internal server error" });
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
-}
-
+};
 
 exports.resetPassword = async (req, res) => {
-  const {token, password} = req.query
+  const { token, password } = req.query;
+  console.log(req.query);
+  const { email } = jwt.verify(token, publicKey);
+  console.log(email);
   try {
-    const email = jwt.verify(token, publicKey)
-    const renter = await Renter.findOneAndUpdate({email}, {password})  
-    return res.json({success: true, message:'Update'})
+    const renter = await Renter.findOneAndUpdate({ email }, { password });
+    return res.send('<h1> Reset password successful </h1>')
   } catch (error) {
     return res
-    .status(500)
-    .json({ success: false, message: "Internal server error" });
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
   }
-  
-}
+};
