@@ -20,10 +20,10 @@ class RenterController {
         privateAnswer: req.body.privateAnswer,
       })
       .then((renter) => {
-        res.status(201).json("Created");
+        res.status(201).json({success: true, message: 'Sign up successful !!'});
       })
       .catch((err) => {
-        res.status(406).json("User is existed");
+        res.status(406).json({success: false, message: 'Invalid'});
       });
   }
   update(req, res, next) {}
