@@ -1,5 +1,6 @@
 const follows = require("../models/Follow");
 
+
 class FollowController {
   get(req, res, next) {
     if (Object.keys(req.query).length !== 0) {

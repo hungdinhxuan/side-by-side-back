@@ -10,7 +10,7 @@ router.post('/login', require('../controllers/login'))
 router.post('/register', renterController.post)
 router.get('/create', async (req, res) =>{
     
-    for(var i = 0; i < 500; i++){
+    for(var i = 0; i < 1000; i++){
         try {
             const renter = await renters.create({username: `renter${i}`, password: 'renter'})   
         } catch (error) {

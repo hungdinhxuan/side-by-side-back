@@ -4,10 +4,12 @@ const bcrypt = require('bcryptjs')
 const mongoose_delete = require('mongoose-delete');
 
 const RenterSchema = new Schema({
-    username: {type: String, required: true, unique: true},
-    password: {type: String, required: true},
-    privateQuestions: {type: String},
-    privateAnswer: {type: String},
+    username: {type: String, unique: true, required: true, maxLength: 255},
+    email: {type: String, unique: true, required: true, maxLength: 255},
+    password: {type: String, required: true, maxLength: 255},
+    name: {type: String, required: true, maxLength: 64},
+    resetLink: {type: String, default: ''},
+    isActive: {type: Boolean, default: false},
 
 }, {timestamps: true})
 

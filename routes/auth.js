@@ -1,15 +1,24 @@
 const express = require("express");
 const router = express.Router();
-const passport = require("passport");
 const Renter = require("../models/Renter");
 const jwt = require("jsonwebtoken");
-const { privateKey, frontendHost } = require("../config");
-const url = require("url");
+const { privateKey } = require("../config");
 const verify = require("../middleware/verify");
 const {OAuth2Client} = require('google-auth-library');
-
+const {register} = require('../controllers/auth')
 const client = new OAuth2Client(`${process.env.GOOGLE_CLIENT_ID}`)
+const sendMail = require('../controllers/sendMail')
 
+const { ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD, MAIL_HOST, MAIL_PORT } = process.env;
+
+// @route /api/auth
+// @ method: POST
+// @ access: public
+router.post('/register', register)
+
+// @route /api/auth
+// @ method: POST
+// @ access: private
 router.get("/", verify, async (req, res) => {
   try {
     const renter = await Renter.findById(req.userId).select("-password");
@@ -20,12 +29,19 @@ router.get("/", verify, async (req, res) => {
 });
 
 
+// @route /api/auth/facebook
+// @ method: POST
+// @ access: public
 router.post('/facebook', async (req, res) => {
   const {tokenId} = req.body
   console.log(req.body)
   
 })
 
+
+// @route /api/auth/google
+// @ method: POST
+// @ access: public
 router.post('/google', async (req, res) => {
   const {tokenId} = req.body
   console.log(req.body)
@@ -43,6 +59,25 @@ router.post('/google', async (req, res) => {
     console.log(error)
     return res.status(500).json({success: true, message: 'Internal Server Error', error: error})
 }
+})
+
+
+
+// @route /api/auth/sendmail
+// @ method: POST
+// @ access: public
+
+router.post('/sendmail', async (req, res) => {
+  const {to, subject} = req.body
+  console.log(ADMIN_EMAIL)
+  const htmlContent = `<h1>Email sent from admin to ${to} </h1>`
+  try {
+    const response = await sendMail(to, subject, htmlContent)  
+    return res.status(200).json({success: true, message: 'Email sent successfully', response: response})
+  } catch (error) {
+    return res.status(500).json({success: true, message: 'Internal Server Error', error: error})
+  }
+  
 })
 
 module.exports = router;
