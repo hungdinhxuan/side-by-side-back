@@ -10,8 +10,9 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const logger = require("morgan");
 const cors = require('cors')
-const {atlasDB, localDB} = require('./config')
 
+
+const {atlasDB, localDB} = require('./config')
 app.use(cors())
 
 
@@ -39,8 +40,12 @@ const connectDB = async () => {
   });
   console.log("Connect to database successfully");
 };
+try {
+  connectDB();  
+} catch (error) {
+  console.log('Cannot connect to database')
+}
 
-connectDB();
 localAuthentication(app);
 facebookAuthentication(app);
 googleAuthentication(app);

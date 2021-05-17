@@ -1,6 +1,7 @@
 const Renter = require("../models/Renter");
 const sendMail = require("../controllers/sendMail")
 const jwt = require("jsonwebtoken")
+require("dotenv").config();
 
 exports.register = async (req, res) => {
   const { username, email, password, name } = req.body;
@@ -45,7 +46,7 @@ exports.activateAccount =  (req, res) => {
             try {
                 const renter = await Renter.findOne({email})
                 if(renter){
-                    
+
                 }
             } catch (error) {
                 return res.status(500).json({success: false, message: 'Internal server error'})
