@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const bcrypt = require('bcryptjs')
 const mongoose_delete = require('mongoose-delete');
+const argon2 = require('argon2');
 
 const RenterSchema = new Schema({
     username: {type: String, unique: true, required: true, maxLength: 255},
