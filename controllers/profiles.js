@@ -1,11 +1,11 @@
-const walls = require("../models/walls");
+const profiles = require("../models/Profile");
 
-class WallController {
+class ProfileController {
   get(req, res, next) {
-    walls
+    profiles
       .find({})
-      .then((wall) => {
-        res.json(wall);
+      .then((profile) => {
+        res.json(profile);
       })
       .catch((err) => {
         res.status(500).json({ err });
@@ -17,7 +17,7 @@ class WallController {
 //   joinedAt: {type: Date},
 //   avatar: {type: String},
   post(req, res, next) {
-    walls
+    profiles
       .create({
         displayName: req.body.displayName,
         describe: req.body.describe,
@@ -25,8 +25,8 @@ class WallController {
         joinedAt: req.body.joinedAt,
         avatar: req.body.avatar,
       })
-      .then((wall) => {
-        res.json(`Created ${wall}`);
+      .then((profile) => {
+        res.json(`Created ${profile}`);
       })
       .catch((err) => {
         res.json(err);
@@ -34,10 +34,10 @@ class WallController {
   }
   update(req, res, next) {}
   delete(req, res, next) {
-    walls
+    profiles
       .deleteOne({ _id: req.id })
-      .then((wall) => {
-        res.json({ success: `Deleted ${wall}` });
+      .then((profile) => {
+        res.json({ success: `Deleted ${profile}` });
       })
       .catch((err) => {
         res.json({ error: "Server error" });
@@ -45,4 +45,4 @@ class WallController {
   }
 }
 
-module.exports = new WallController();
+module.exports = new ProfileController();

@@ -1,4 +1,4 @@
-const histories = require("../models/histories");
+const histories = require("../models/History");
 
 class HistoryController {
   get(req, res, next) {

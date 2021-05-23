@@ -1,150 +1,86 @@
 const express = require("express");
 const router = express.Router();
-const passport = require("passport");
-const renters = require("../models/renters");
-const jwt = require("jsonwebtoken");
-const { privateKey, frontendHost } = require("../config");
-const url = require("url");
+const Renter = require("../models/Renter");
+const verify = require("../middleware/verify");
+const {register, googleLogin, forgotPassword, resetPassword} = require('../controllers/auth')
+require("dotenv").config();
 
 
-router.get(
-  "/facebook",
-  passport.authenticate("facebook", {
-    authType: "reauthenticate",
-    scope: ["user_friends"],
-  })
-);
+const sendMail = require('../controllers/sendMail')
 
-router.get(
-  "/facebook/callback",
-  passport.authenticate("facebook"),
-  function (req, res) {
-    // Successful authentication, redirect home.
-    renters
-      .create({
-        username: "facebook_" + req.user.id,
-        password: Math.random().toString(),
-      })
-      .then((renter) => {
-        console.log("Run then 1");
-        const token = jwt.sign({ id: renter._id }, privateKey, {
-          algorithm: "RS256",
-        });
-        res.redirect(
-          url.format({
-            pathname: frontendHost,
-            query: {
-              token,
-            },
-          })
-        );
-      })
-      .catch((err) => {
-        renters
-          .findOne({ username: "facebook_" + req.user.id })
-          .then((renter) => {
-            if (renter) {
-              const token = jwt.sign({ id: renter._id }, privateKey, {
-                algorithm: "RS256",
-              });
-              res.redirect(
-                url.format({
-                  pathname: frontendHost,
-                  query: {
-                    token,
-                  },
-                })
-              );
-            } else {
-              res.redirect(
-                url.format({
-                  pathname: frontendHost,
-                  query: {
-                    error: "Server error",
-                  },
-                })
-              );
-            }
-          })
-          .catch((err2) => {
-            res.redirect(
-              url.format({
-                pathname: frontendHost,
-                query: {
-                  error: "Server error",
-                },
-              })
-            );
-          });
-      });
+const { ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD, MAIL_HOST, MAIL_PORT } = process.env;
+
+// @route /api/auth
+// @ method: POST
+// @ access: public
+router.post('/register', register)
+
+// @route /api/auth
+// @ method: POST
+// @ access: private
+router.get("/", verify, async (req, res) => {
+  try {
+    const renter = await Renter.findById(req.userId).select("-password");
+    return res.json({ success: true, renter });
+  } catch (error) {
+    return res.json({success: false, message: 'Internal Server Error'})
+  } 
+});
+
+
+// @route /api/auth/facebook
+// @ method: POST
+// @ access: public
+router.post('/facebook', async (req, res) => {
+  const {tokenId} = req.body
+  console.log(req.body)
+  
+})
+
+
+// @route /api/auth/google
+// @ method: POST
+// @ access: public
+router.post('/google', googleLogin)
+
+
+
+// @route /api/auth/sendmail
+// @ method: POST
+// @ access: public
+
+router.post('/sendmail', async (req, res) => {
+  const {to, subject} = req.body
+  console.log(ADMIN_EMAIL)
+  const htmlContent = `<h1>Email sent from admin to ${to} </h1>`
+  try {
+    const response = await sendMail(to, subject, htmlContent)  
+    return res.status(200).json({success: true, message: 'Email sent successfully', response: response})
+  } catch (error) {
+    return res.status(500).json({success: true, message: 'Internal Server Error', error: error})
   }
-);
+  
+})
 
-router.get(
-  "/google",
-  passport.authenticate("google", {
-    scope: ["https://www.googleapis.com/auth/plus.login"],
-  })
-);
+// @route /api/auth/forgot-password
+// @ method: POST
+// @ access: public
+router.post('/forgot-password', forgotPassword)
 
-router.get(
-  "/google/callback",
-  passport.authenticate("google"),
-  function (req, res) {
-    renters
-      .create({
-        username: "google_" + req.user.id,
-        password: Math.random().toString(),
-      })
-      .then((renter) => {
-        res.redirect(
-          url.format({
-            pathname: frontendHost,
-            query: {
-              token,
-            },
-          })
-        );
-      })
-      .catch((err) => {
-        renters
-          .findOne({ username: "google_" + req.user.id })
-          .then((renter) => {
-            if (renter) {
-              const token = jwt.sign({ id: renter._id }, privateKey, {
-                algorithm: "RS256",
-              });
-              res.redirect(
-                url.format({
-                  pathname: frontendHost,
-                  query: {
-                    token,
-                  },
-                })
-              );
-            } else {
-              res.redirect(
-                url.format({
-                  pathname: frontendHost,
-                  query: {
-                    error: "Server error",
-                  },
-                })
-              );
-            }
-          })
-          .catch((err2) => {
-            res.redirect(
-              url.format({
-                pathname: frontendHost,
-                query: {
-                  error: "Server error",
-                },
-              })
-            );
-          });
-      });
+// @route /api/auth/reset-password
+// @ method: GET
+// @ access: public
+router.get('/reset-password', resetPassword)
+
+
+router.get('/search', async (req, res) => {
+  const {email} = req.query
+  try {
+    const renter = await Renter.findOne({email: email})
+    return res.json({success: true, message: 'OK', renter})
+  } catch (error) {
+    return res.status(500).json({success: false, message: 'Internal Server Error'})
   }
-);
+})
 
 module.exports = router;

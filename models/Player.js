@@ -6,11 +6,10 @@ const PlayerSchema = new Schema({
     avatar: {type: String},
     firstname: {type: String},
     lastname: {type: String},
-    sex: {type: String},
     city: {type: String},
     nation: {type: String},
     price: {type: Number},
-    renterId: {type: String}
+    renterId: {type: Schema.Types.ObjectId, ref: 'renters'}
 
 }, {timestamps: true})
 

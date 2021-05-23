@@ -6,7 +6,7 @@ const PaymentSchema = new Schema({
     name: {type: String},
     cardNumber: {type: String},
     releaseDate: {type: String},
-    walletId: {type: String},
+    walletId: {type: Schema.Types.ObjectId, ref:'wallets'},
 }, {timestamps: true})
 
 PaymentSchema.plugin(mongoose_delete)

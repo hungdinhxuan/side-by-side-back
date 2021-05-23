@@ -1,11 +1,11 @@
 module.exports = (app) => {
   const passport = require("passport");
   const LocalStrategy = require("passport-local").Strategy;
-  const renters = require("../models/renters");
+  const Renter = require("../models/Renter");
   const bcrypt = require("bcryptjs");
   passport.use(
     new LocalStrategy(function (username, password, done) {
-      renters.findOne({ username: username }, function (err, renter) {
+      Renter.findOne({ username: username }, function (err, renter) {
         if (err) {
           return done(err);
         }

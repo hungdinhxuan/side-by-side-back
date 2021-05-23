@@ -1,13 +1,13 @@
-const renters = require('./renters')
-const follows = require('./follows')
-const auth = require('./auth')
-const players = require('./players')
+const rentersRouter = require('./renters')
+const followsRouter = require('./follows')
+const authRouter = require('./auth')
+const playersRouter = require('./players')
 
 
 module.exports = (app) => {
     
-    app.use('/api/renter', renters)
-    app.use('/api/follow', follows)
-    app.use('/auth', auth)
-    app.use('/api/player', players)
+    app.use('/api/renter', rentersRouter)
+    app.use('/api/follow', followsRouter)
+    app.use('/api/auth', authRouter)
+    app.use('/api/player', playersRouter)
 }

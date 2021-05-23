@@ -1,4 +1,4 @@
-const payments = require("../models/payments");
+const payments = require("../models/Payment");
 
 class PaymentController {
   get(req, res, next) {

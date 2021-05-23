@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 const mongoose = require("mongoose");
 const routes = require("./routes/index.js");
 const localAuthentication = require("./authentication/local");
@@ -10,10 +10,11 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const logger = require("morgan");
 const cors = require('cors')
-const {atlasDB, localDB} = require('./config')
 
+
+const {atlasDB, localDB} = require('./config')
 app.use(cors())
-app.options('*', cors())
+
 
 app.use(
   session({
@@ -39,8 +40,12 @@ const connectDB = async () => {
   });
   console.log("Connect to database successfully");
 };
+try {
+  connectDB();  
+} catch (error) {
+  console.log('Cannot connect to database')
+}
 
-connectDB();
 localAuthentication(app);
 facebookAuthentication(app);
 googleAuthentication(app);

@@ -2,14 +2,14 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const mongoose_delete = require('mongoose-delete');
 
-const WallSchema = new Schema({
+const ProfileSchema = new Schema({
     displayName: {type: String},
     describe: {type: String},
     linkHightLight: {type: String},
-    joinedAt: {type: Date},
     avatar: {type: String},
+    playerId: {type: Schema.Types.ObjectId, required: true, ref:'players'}
 }, {timestamps: true})
 
 
-WallSchema.plugin(mongoose_delete)
-module.exports = mongoose.model('walls', WallSchema)
+ProfileSchema.plugin(mongoose_delete)
+module.exports = mongoose.model('profiles', ProfileSchema)
