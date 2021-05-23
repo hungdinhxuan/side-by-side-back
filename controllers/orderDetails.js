@@ -1,4 +1,4 @@
-const transacts = require("../models/Transact");
+const orderDetails = require("../models/OrderDetail");
 
 // renterID: {type: String, required: true},
 //     playerID: {type: String, required: true},
@@ -7,19 +7,19 @@ const transacts = require("../models/Transact");
 //     status: {type: String},
 //     time: {type: Date},
 
-class TransactController {
+class OrderDetailController {
   get(req, res, next) {
-    transacts
+    orderDetails
       .findOne({ _id: req.body.id })
-      .then((transact) => {
-        res.json(transact);
+      .then((orderDetail) => {
+        res.json(orderDetail);
       })
       .catch((err) => {
         res.json({ err: 'Server error' })
       });
   }
   post(req, res, next) {
-    transacts.create({
+    orderDetails.create({
       renterID: req.body.renterID,
       playerID: req.body.playerID,
       amount: req.body.amount,
@@ -27,8 +27,8 @@ class TransactController {
       status: req.body.status,
       time: req.body.time,
     })
-    .then((transact)=>{
-        res.json(`Created ${transact}`)
+    .then((orderDetail)=>{
+        res.json(`Created ${orderDetail}`)
     } )
     .catch(err => {
         res.json({ err: 'Server error' })
@@ -36,10 +36,10 @@ class TransactController {
   }
   update(req, res, next) {}
   delete(req, res, next) {
-    transacts
+    orderDetails
       .deleteOne({ _id: req.id })
-      .then((transact) => {
-        res.json({ success: `Deleted ${transact}` });
+      .then((orderDetail) => {
+        res.json({ success: `Deleted ${orderDetail}` });
       })
       .catch((err) => {
         res.json({ error: "Server error" });
@@ -47,4 +47,4 @@ class TransactController {
   }
 }
 
-module.exports = new TransactController();
+module.exports = new OrderDetailController();

@@ -6,7 +6,6 @@ const PlayerSchema = new Schema({
     avatar: {type: String},
     firstname: {type: String},
     lastname: {type: String},
-    
     city: {type: String},
     nation: {type: String},
     price: {type: Number},

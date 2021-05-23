@@ -9,9 +9,8 @@ const RenterSchema = new Schema({
     email: {type: String, unique: true, required: true, maxLength: 255},
     password: {type: String, required: true, maxLength: 255},
     name: {type: String, required: true, maxLength: 64},
-    gender: {type: String},
-    resetLink: {type: String, default: ''},
-    isActive: {type: Boolean, default: false},
+    gender: {type: String, default: 'Khác'},
+    avatar: {type: String, default:'https://dc577.4shared.com/img/zLirxaRAiq/s25/17997bde090/default-avatar'}
 
 }, {timestamps: true})
 
