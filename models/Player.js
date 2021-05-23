@@ -4,8 +4,8 @@ const mongoose_delete = require('mongoose-delete');
 
 const PlayerSchema = new Schema({
     avatar: {type: String},
-    firstname: {type: String},
-    lastname: {type: String},
+    firstName: {type: String},
+    lastName: {type: String},
     city: {type: String},
     nation: {type: String},
     price: {type: Number},

@@ -1,4 +1,6 @@
 const Renter = require("../models/Renter");
+const PAGE_SIZE = 50;
+const axios = require("axios");
 
 class RenterController {
   async get(req, res) {
@@ -69,6 +71,36 @@ class RenterController {
       return res.status(500).json({success: false, message: 'Internal Server Error', error: error})
     }
   }
+
+  async createSample(req, res) {
+    try {
+      const users = await axios.get(
+        "https://randomuser.me/api/?results=1000&gender=female"
+      );
+      const results = users.data.results;
+      console.log('ok')
+      for(let i = 0; i < 1000; i++) {
+        const renter = await Renter.create({
+          username: `renter${i}_${results[i].login.username}`,
+          password: 'zodiac',
+          email:  Math.random().toString() +  results[i].email,
+          name: results[i].name.first + ' ' + results[i].last,
+          genders: results[i].gender
+        })
+
+      }
+      return res.json({ success: true, message: "Created sample renter successful" });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({
+          success: false,
+          message: "Internal Server Error",
+          error: error,
+        });
+    }
+  }
+
 }
 
 module.exports = new RenterController();
