@@ -11,32 +11,31 @@ class PlayerController {
         let players = await Player.find({})
           .skip(skip)
           .limit(PAGE_SIZE)
-          .populate('renterId', ['username'])
-        res.json(players);
+          .populate("renterId", ["username"]);
+        return res.json(players);
       } catch (error) {
-        res
+        return res
           .status(500)
           .json({ success: false, message: "Internal Server Error" });
       }
     }
   }
 
-  post(req, res, next) {
-    Player.create({
-      avatar: req.body.avatar,
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      sex: req.body.sex,
-      city: req.body.city,
-      nation: req.body.nation,
-      renterId: req.body.renterID,
-    })
-      .then((player) => {
-        res.json(`Created ${player}`);
-      })
-      .catch((err) => {
-        res.json(err);
+  async post(req, res, next) {
+    try {
+      const player = await Player.create({
+        avatar: req.body.avatar,
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        sex: req.body.sex,
+        city: req.body.city,
+        nation: req.body.nation,
+        renterId: req.body.renterID,
       });
+      return res.json({success: true, message: `Created ${player}`})
+    } catch (error) {
+      return res.status(500).json({success: false, message: 'Internal Server Error', error: error})
+    }
   }
   update(req, res, next) {}
   delete(req, res, next) {
@@ -48,14 +47,15 @@ class PlayerController {
         res.status(500).json({ err });
       });
   }
-  destroy(req, res) {
-    Player.remove({})
-      .then((player) => {
-        res.send("Removed Player table");
-      })
-      .catch((err) => {
-        res.status(500).json({ error: "Server error" });
-      });
+
+  async destroy(req, res) {
+    try {
+      const player = await Player.remove({})
+      return res.json({ success: true, message: 'Removed Player table'})
+    } catch (error) {
+      return res.status(500).json({success: false, message: 'Internal Server Error', error: error})
+    }
+    
   }
 }
 

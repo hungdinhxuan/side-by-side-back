@@ -4,6 +4,7 @@ const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(`${process.env.GOOGLE_CLIENT_ID}`);
 const { publicKey, privateKey } = require("../config");
 const sendMail = require("./sendMail");
+const rentersController = require('./renters')
 
 require("dotenv").config();
 
@@ -47,38 +48,7 @@ exports.googleLogin = async (req, res, next) => {
   }
 };
 
-exports.register = async (req, res) => {
-  const { username, email, password, name, gender } = req.body;
-  console.log(req.body);
-  try {
-    let renter = await Renter.findOne({ username });
-    if (renter) {
-      return res.status(406).json({
-        success: false,
-        message: "Username is already existed",
-      });
-    }
-    renter = await Renter.findOne({ email });
-    console.log(renter);
-    if (renter) {
-      return res
-        .status(406)
-        .json({ success: false, message: "Email is already existed" });
-    }
-    let newRenter = await Renter.create({
-      username,
-      email,
-      password,
-      name,
-      gender,
-    });
-    return res
-      .status(201)
-      .json({ success: true, message: "Sign up successful !" });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
-};
+exports.register = rentersController.post
 
 exports.activateAccount = (req, res) => {
   const { token } = req.body;
