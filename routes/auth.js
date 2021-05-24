@@ -4,13 +4,30 @@ const Renter = require('../models/Renter')
 const verify = require('../middleware/verify')
 const {register, googleLogin, forgotPassword, resetPassword} = require('../controllers/auth')
 require('dotenv').config()
-
+const passport = require('passport')
+const {privateKey} = require('../config')
+const jwt = require('jsonwebtoken')
 
 const sendMail = require('../controllers/sendMail')
 
 const { ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD, MAIL_HOST, MAIL_PORT } = process.env
 
-// @route /api/auth
+// @route /api/auth/login
+// @ method: POST
+// @ access: public
+router.post('/login', passport.authenticate('local'), (req, res) => {
+  
+  const token = jwt.sign({ user: req.user.username }, privateKey, {
+    algorithm: 'RS256',
+  })
+  return res.json({
+    success: true,
+    message: 'Login successful',
+    token,
+  })
+})
+
+// @route /api/auth/register
 // @ method: POST
 // @ access: public
 router.post('/register', register)

@@ -15,6 +15,7 @@ module.exports = (app) => {
         if (!bcrypt.compareSync(password, renter.password)) {
           return done(null, false)
         }
+        
         return done(null, renter)
       })
     })

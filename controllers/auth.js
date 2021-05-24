@@ -8,6 +8,7 @@ const rentersController = require('./renters')
 
 require('dotenv').config()
 
+
 exports.googleLogin = async (req, res, next) => {
   const { tokenId } = req.body
   console.log(req.body)
