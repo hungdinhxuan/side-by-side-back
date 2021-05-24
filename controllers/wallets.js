@@ -1,4 +1,4 @@
-const wallets = require("../models/Wallet");
+const wallets = require('../models/Wallet');
 
 class WalletController {
   get(req, res, next) {
@@ -34,7 +34,7 @@ class WalletController {
         res.json({ success: `Deleted ${wallet}` });
       })
       .catch((err) => {
-        res.json({ error: "Server error" });
+        res.json({ error: 'Server error' });
       });
   }
 }

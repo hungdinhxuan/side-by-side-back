@@ -1,7 +1,7 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const PlayerController = require("../controllers/players");
-const verify = require("../middleware/verify");
+const PlayerController = require('../controllers/players');
+const verify = require('../middleware/verify');
 
 // @route GET /api/player/create-sample
 // @desc create sample players
@@ -12,7 +12,7 @@ router.post('/create-sample', PlayerController.createSample)
 // @route GET /api/player/destroy
 // @desc destroy all Player
 // @access private
-router.get("/destroy",  PlayerController.destroy);
-router.get("/", PlayerController.get);
+router.get('/destroy',  PlayerController.destroy);
+router.get('/', PlayerController.get);
 
 module.exports = router;

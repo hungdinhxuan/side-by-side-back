@@ -1,4 +1,4 @@
-const follows = require("../models/Follow");
+const follows = require('../models/Follow');
 
 
 class FollowController {
@@ -21,7 +21,7 @@ class FollowController {
         res.json(follow);
       })
       .catch((err) => {
-        res.json({ error: "Server error" });
+        res.json({ error: 'Server error' });
       });
   }
   post(req, res, next) {
@@ -41,7 +41,7 @@ class FollowController {
         res.json({ success: `Deleted ${follow}` });
       })
       .catch((err) => {
-        res.json({ error: "Server error" });
+        res.json({ error: 'Server error' });
       });
   }
 }

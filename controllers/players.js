@@ -1,8 +1,8 @@
-const Player = require("../models/Player");
+const Player = require('../models/Player');
 const PAGE_SIZE = 50;
-const axios = require("axios");
-const { linerImgLink, getRandomInt } = require("../config");
-const Renter = require("../models/Renter");
+const axios = require('axios');
+const { linerImgLink, getRandomInt } = require('../config');
+const Renter = require('../models/Renter');
 
 
 class PlayerController {
@@ -15,12 +15,12 @@ class PlayerController {
         let players = await Player.find({})
           .skip(skip)
           .limit(PAGE_SIZE)
-          .populate("renterId", ["username"]);
+          .populate('renterId', ['username']);
         return res.json(players);
       } catch (error) {
         return res
           .status(500)
-          .json({ success: false, message: "Internal Server Error" });
+          .json({ success: false, message: 'Internal Server Error' });
       }
     }
   }
@@ -41,7 +41,7 @@ class PlayerController {
         .status(500)
         .json({
           success: false,
-          message: "Internal Server Error",
+          message: 'Internal Server Error',
           error: error,
         });
     }
@@ -60,13 +60,13 @@ class PlayerController {
   async destroy(req, res) {
     try {
       const player = await Player.remove({});
-      return res.json({ success: true, message: "Removed Player table" });
+      return res.json({ success: true, message: 'Removed Player table' });
     } catch (error) {
       return res
         .status(500)
         .json({
           success: false,
-          message: "Internal Server Error",
+          message: 'Internal Server Error',
           error: error,
         });
     }
@@ -75,7 +75,7 @@ class PlayerController {
     try {
       const renter = await Renter.find({});
       const users = await axios.get(
-        "https://randomuser.me/api/?results=1000&gender=female"
+        'https://randomuser.me/api/?results=1000&gender=female'
       );
       
       const results = users.data.results;
@@ -84,7 +84,7 @@ class PlayerController {
       let line;
       while ((line = linerImgLink.next())) {
         const player = await Player.create({
-          avatar: line.toString("utf-8"),
+          avatar: line.toString('utf-8'),
           firstName: results[index].name.first,
           lastName: results[index].name.last,
           city: results[index].location.city,
@@ -94,13 +94,13 @@ class PlayerController {
         });
         index++;
       }
-      return res.json({ success: true, message: "Created sample player successful" });
+      return res.json({ success: true, message: 'Created sample player successful' });
     } catch (error) {
       return res
         .status(500)
         .json({
           success: false,
-          message: "Internal Server Error",
+          message: 'Internal Server Error',
           error: error,
         });
     }

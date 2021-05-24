@@ -1,5 +1,5 @@
-const nodeMailer = require("nodemailer");
-require("dotenv").config();
+const nodeMailer = require('nodemailer');
+require('dotenv').config();
 const { ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD, MAIL_HOST, MAIL_PORT } = process.env;
 
 const sendMail = (to, subject, htmlContent) => {

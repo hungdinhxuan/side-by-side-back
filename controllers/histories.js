@@ -1,4 +1,4 @@
-const histories = require("../models/History");
+const histories = require('../models/History');
 
 class HistoryController {
   get(req, res, next) {
@@ -38,7 +38,7 @@ class HistoryController {
         res.json({ success: `Deleted ${histories}` });
       })
       .catch((err) => {
-        res.json({ error: "Server error" });
+        res.json({ error: 'Server error' });
       });
   }
 }

@@ -1,4 +1,4 @@
-const profiles = require("../models/Profile");
+const profiles = require('../models/Profile');
 
 class ProfileController {
   get(req, res, next) {
@@ -40,7 +40,7 @@ class ProfileController {
         res.json({ success: `Deleted ${profile}` });
       })
       .catch((err) => {
-        res.json({ error: "Server error" });
+        res.json({ error: 'Server error' });
       });
   }
 }

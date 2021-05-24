@@ -1,6 +1,6 @@
-const Renter = require("../models/Renter");
+const Renter = require('../models/Renter');
 const PAGE_SIZE = 50;
-const axios = require("axios");
+const axios = require('axios');
 
 class RenterController {
   async get(req, res) {
@@ -14,7 +14,7 @@ class RenterController {
       } catch (error) {
         return res
           .status(500)
-          .json({ success: false, message: "Internal Server Error" });
+          .json({ success: false, message: 'Internal Server Error' });
       }
     }
   }
@@ -25,7 +25,7 @@ class RenterController {
       if (renter) {
         return res.status(406).json({
           success: false,
-          message: "Username is already existed",
+          message: 'Username is already existed',
         });
       }
       renter = await Renter.findOne({ email });
@@ -33,7 +33,7 @@ class RenterController {
       if (renter) {
         return res
           .status(406)
-          .json({ success: false, message: "Email is already existed" });
+          .json({ success: false, message: 'Email is already existed' });
       }
       let newRenter = await Renter.create({
         username,
@@ -44,11 +44,11 @@ class RenterController {
       });
       return res
         .status(201)
-        .json({ success: true, message: "Sign up successful !" });
+        .json({ success: true, message: 'Sign up successful !' });
     } catch (error) {
       res
         .status(500)
-        .json({ success: false, message: "Internal Server Error" });
+        .json({ success: false, message: 'Internal Server Error' });
     }
   }
 
@@ -60,7 +60,7 @@ class RenterController {
         res.json({ success: `Deleted ${renter}` });
       })
       .catch((err) => {
-        res.status(500).json({ error: "Server error" });
+        res.status(500).json({ error: 'Server error' });
       });
   }
   async destroy(req, res) {
@@ -75,7 +75,7 @@ class RenterController {
   async createSample(req, res) {
     try {
       const users = await axios.get(
-        "https://randomuser.me/api/?results=1000&gender=female"
+        'https://randomuser.me/api/?results=1000&gender=female'
       );
       const results = users.data.results;
       console.log('ok')
@@ -89,13 +89,13 @@ class RenterController {
         })
 
       }
-      return res.json({ success: true, message: "Created sample renter successful" });
+      return res.json({ success: true, message: 'Created sample renter successful' });
     } catch (error) {
       return res
         .status(500)
         .json({
           success: false,
-          message: "Internal Server Error",
+          message: 'Internal Server Error',
           error: error,
         });
     }

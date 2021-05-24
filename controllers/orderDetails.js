@@ -1,4 +1,4 @@
-const orderDetails = require("../models/OrderDetail");
+const orderDetails = require('../models/OrderDetail');
 
 // renterID: {type: String, required: true},
 //     playerID: {type: String, required: true},
@@ -42,7 +42,7 @@ class OrderDetailController {
         res.json({ success: `Deleted ${orderDetail}` });
       })
       .catch((err) => {
-        res.json({ error: "Server error" });
+        res.json({ error: 'Server error' });
       });
   }
 }

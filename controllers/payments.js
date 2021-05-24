@@ -1,4 +1,4 @@
-const payments = require("../models/Payment");
+const payments = require('../models/Payment');
 
 class PaymentController {
   get(req, res, next) {
@@ -38,7 +38,7 @@ class PaymentController {
         res.json({ success: `Deleted ${payment}` });
       })
       .catch((err) => {
-        res.json({ error: "Server error" });
+        res.json({ error: 'Server error' });
       });
   }
 }

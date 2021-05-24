@@ -1,11 +1,11 @@
-const validator = require("validator");
+const validator = require('validator');
 
 module.exports = (req, res, next) => {
   const { username, password } = req.body;
-  if (!validator.matches(username, "^[a-zA-Z0-9_.-]*$")) {
+  if (!validator.matches(username, '^[a-zA-Z0-9_.-]*$')) {
     return res
       .status(400)
-      .json({ success: false, message: "Username is not a valid" });
+      .json({ success: false, message: 'Username is not a valid' });
   }
   if (
     !validator.isStrongPassword(password, {
@@ -25,7 +25,7 @@ module.exports = (req, res, next) => {
   ) {
     return res
       .status(400)
-      .json({ success: false, message: "Password is too weak" });
+      .json({ success: false, message: 'Password is too weak' });
   }
   next()
 };

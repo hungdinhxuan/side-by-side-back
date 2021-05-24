@@ -1,9 +1,9 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const Renter = require("../models/Renter");
-const verify = require("../middleware/verify");
+const Renter = require('../models/Renter');
+const verify = require('../middleware/verify');
 const {register, googleLogin, forgotPassword, resetPassword} = require('../controllers/auth')
-require("dotenv").config();
+require('dotenv').config();
 
 
 const sendMail = require('../controllers/sendMail')
@@ -18,9 +18,9 @@ router.post('/register', register)
 // @route /api/auth
 // @ method: POST
 // @ access: private
-router.get("/", verify, async (req, res) => {
+router.get('/', verify, async (req, res) => {
   try {
-    const renter = await Renter.findById(req.userId).select("-password");
+    const renter = await Renter.findById(req.userId).select('-password');
     return res.json({ success: true, renter });
   } catch (error) {
     return res.json({success: false, message: 'Internal Server Error'})
