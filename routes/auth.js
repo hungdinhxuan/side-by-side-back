@@ -12,13 +12,13 @@ const sendMail = require('../controllers/sendMail')
 
 const { ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD, MAIL_HOST, MAIL_PORT } = process.env
 
-router.get('/login-failure', (req, res) => {
+router.get('/login/failure', (req, res) => {
   return res.status(401).json({success: false, message: 'Tên đăng nhập hoặc mật khẩu không đúng'})
 })
 // @route /api/auth/login
 // @ method: POST
 // @ access: public
-router.post('/login', passport.authenticate('local', {failureRedirect: '/login-failure' }), (req, res) => {
+router.post('/login', passport.authenticate('local', {failureRedirect: '/api/auth/login/failure' }), (req, res) => {
   
   const token = jwt.sign({ user: req.user.username }, privateKey, {
     algorithm: 'RS256',
