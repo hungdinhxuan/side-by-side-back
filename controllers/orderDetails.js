@@ -1,4 +1,4 @@
-const orderDetails = require('../models/OrderDetail');
+const orderDetails = require('../models/OrderDetail')
 
 // renterID: {type: String, required: true},
 //     playerID: {type: String, required: true},
@@ -12,11 +12,11 @@ class OrderDetailController {
     orderDetails
       .findOne({ _id: req.body.id })
       .then((orderDetail) => {
-        res.json(orderDetail);
+        res.json(orderDetail)
       })
       .catch((err) => {
         res.json({ err: 'Server error' })
-      });
+      })
   }
   post(req, res, next) {
     orderDetails.create({
@@ -39,12 +39,12 @@ class OrderDetailController {
     orderDetails
       .deleteOne({ _id: req.id })
       .then((orderDetail) => {
-        res.json({ success: `Deleted ${orderDetail}` });
+        res.json({ success: `Deleted ${orderDetail}` })
       })
       .catch((err) => {
-        res.json({ error: 'Server error' });
-      });
+        res.json({ error: 'Server error' })
+      })
   }
 }
 
-module.exports = new OrderDetailController();
+module.exports = new OrderDetailController()

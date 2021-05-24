@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const bcrypt = require('bcryptjs')
-const mongoose_delete = require('mongoose-delete');
+const mongoose_delete = require('mongoose-delete')
 
 
 const RenterSchema = new Schema({

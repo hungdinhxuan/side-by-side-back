@@ -1,28 +1,28 @@
-const follows = require('../models/Follow');
+const follows = require('../models/Follow')
 
 
 class FollowController {
   get(req, res, next) {
     if (Object.keys(req.query).length !== 0) {
-      console.log(req.query);
+      console.log(req.query)
       follows
         .findById(req.query.id)
         .then((follow) => {
-          res.json(follow);
+          res.json(follow)
         })
         .catch((err) => {
-          res.json(err);
-        });
+          res.json(err)
+        })
     }
 
     follows
       .find({})
       .then((follow) => {
-        res.json(follow);
+        res.json(follow)
       })
       .catch((err) => {
-        res.json({ error: 'Server error' });
-      });
+        res.json({ error: 'Server error' })
+      })
   }
   post(req, res, next) {
     // follows.create({username: req.body.username, password: req.body.password, privateQuestion: req.body.privateQuestion, privateAnswer: req.body.privateAnswer})
@@ -38,12 +38,12 @@ class FollowController {
     follows
       .deleteOne({ _id: req.body.id })
       .then((follow) => {
-        res.json({ success: `Deleted ${follow}` });
+        res.json({ success: `Deleted ${follow}` })
       })
       .catch((err) => {
-        res.json({ error: 'Server error' });
-      });
+        res.json({ error: 'Server error' })
+      })
   }
 }
 
-module.exports = new FollowController();
+module.exports = new FollowController()

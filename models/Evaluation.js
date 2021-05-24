@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const mongoose_delete = require('mongoose-delete');
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const mongoose_delete = require('mongoose-delete')
 
 const EvaluationSchema = new Schema(
   {
@@ -13,8 +13,8 @@ const EvaluationSchema = new Schema(
     rating: { type: String, enum: ['1', '2', '3', '4', '5'], default: '5' },
   },
   { timestamps: true }
-);
+)
 
-EvaluationSchema.plugin(mongoose_delete);
+EvaluationSchema.plugin(mongoose_delete)
 
-module.exports = mongoose.model('evaluations', EvaluationSchema);
+module.exports = mongoose.model('evaluations', EvaluationSchema)

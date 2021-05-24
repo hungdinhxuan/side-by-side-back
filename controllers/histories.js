@@ -1,15 +1,15 @@
-const histories = require('../models/History');
+const histories = require('../models/History')
 
 class HistoryController {
   get(req, res, next) {
     histories
       .find({})
       .then((history) => {
-        res.json(history);
+        res.json(history)
       })
       .catch((err) => {
-        res.json({ err });
-      });
+        res.json({ err })
+      })
   }
 //   historiesId: {type: String, required: true},
 //   ammount: {type: Number, required: true, default: 0},
@@ -24,23 +24,23 @@ class HistoryController {
         methods: req.body.methods,
       })
       .then((history) => {
-        res.json(`Created ${history}`);
+        res.json(`Created ${history}`)
       })
       .catch((err) => {
-        res.json(err);
-      });
+        res.json(err)
+      })
   }
   update(req, res, next) {}
   delete(req, res, next) {
     histories
       .deleteOne({ _id: req.id })
       .then((histories) => {
-        res.json({ success: `Deleted ${histories}` });
+        res.json({ success: `Deleted ${histories}` })
       })
       .catch((err) => {
-        res.json({ error: 'Server error' });
-      });
+        res.json({ error: 'Server error' })
+      })
   }
 }
 
-module.exports = new HistoryController();
+module.exports = new HistoryController()

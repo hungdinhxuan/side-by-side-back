@@ -1,6 +1,6 @@
 module.exports = (app) => {
   var passport = require('passport'),
-    TwitterStrategy = require('passport-twitter').Strategy;
+    TwitterStrategy = require('passport-twitter').Strategy
 
   passport.use(
     new TwitterStrategy(
@@ -10,8 +10,8 @@ module.exports = (app) => {
         callbackURL: 'http://www.example.com/auth/twitter/callback',
       },
       function (token, tokenSecret, profile, done) {
-        done(null, profile);
+        done(null, profile)
       }
     )
-  );
-};
+  )
+}

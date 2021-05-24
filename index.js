@@ -1,14 +1,14 @@
-const express = require("express");
-const app = express();
-const PORT = process.env.PORT || 3000;
-const mongoose = require("mongoose");
-const routes = require("./routes/index.js");
-const localAuthentication = require("./authentication/local");
-const facebookAuthentication = require("./authentication/facebook");
-const googleAuthentication = require("./authentication/google");
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
-const logger = require("morgan");
+const express = require('express')
+const app = express()
+const PORT = process.env.PORT || 3000
+const mongoose = require('mongoose')
+const routes = require('./routes/index.js')
+const localAuthentication = require('./authentication/local')
+const facebookAuthentication = require('./authentication/facebook')
+const googleAuthentication = require('./authentication/google')
+const cookieParser = require('cookie-parser')
+const session = require('express-session')
+const logger = require('morgan')
 const cors = require('cors')
 
 
@@ -18,17 +18,17 @@ app.use(cors())
 
 app.use(
   session({
-    secret: "keyboard cat",
+    secret: 'keyboard cat',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false },
   })
-);
+)
 
-app.use(logger("dev"));
-app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(logger('dev'))
+app.use(cookieParser())
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 
 
 const connectDB = async () => {
@@ -37,30 +37,30 @@ const connectDB = async () => {
     useUnifiedTopology: true,
     useFindAndModify: false,
     useCreateIndex: true,
-  });
-  console.log("Connect to database successfully");
-};
+  })
+  console.log('Connect to database successfully')
+}
 try {
-  connectDB();  
+  connectDB()  
 } catch (error) {
   console.log('Cannot connect to database')
 }
 
-localAuthentication(app);
-facebookAuthentication(app);
-googleAuthentication(app);
+localAuthentication(app)
+facebookAuthentication(app)
+googleAuthentication(app)
 
-app.get("/", (req, res) => {
-  res.json(req.user);
-});
+app.get('/', (req, res) => {
+  res.json(req.user)
+})
 
-app.get("/home", (req, res) => {
-  res.json(req.user);
-});
-
-
-routes(app);
+app.get('/home', (req, res) => {
+  res.json(req.user)
+})
 
 
+routes(app)
 
-app.listen(PORT);
+
+
+app.listen(PORT)

@@ -1,11 +1,11 @@
-const path = require("path");
-const fs = require("fs");
-const lineByLine = require('n-readlines');
-const privateKey = fs.readFileSync(path.join(__dirname, "/keys/privateKey.pem"));
-const publicKey = fs.readFileSync(path.join(__dirname, "/keys/publicKey.pem"));
+const path = require('path')
+const fs = require('fs')
+const lineByLine = require('n-readlines')
+const privateKey = fs.readFileSync(path.join(__dirname, '/keys/privateKey.pem'))
+const publicKey = fs.readFileSync(path.join(__dirname, '/keys/publicKey.pem'))
 const linerImgLink = new lineByLine(path.join(__dirname, 'link.txt'))
 
-require("dotenv").config();
+require('dotenv').config()
 // const DB_USERNAME="admin"
 // const DB_PASSWORD="admin"
 // const DB_NAME="SideBySide"
@@ -18,13 +18,13 @@ require("dotenv").config();
 // const  MAIL_HOST="smtp.gmail.com"
 // const  MAIL_PORT=587
 // const  JWT_ACTIVATE="aduvip"
-const frontendHost = "http://localhost:3000";
-const atlasDB = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.rrcyu.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
-const localDB = "mongodb://localhost:27017/SideBySideDB";
+const frontendHost = 'http://localhost:3000'
+const atlasDB = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.rrcyu.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
+const localDB = 'mongodb://localhost:27017/SideBySideDB'
 function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min) + min) //The maximum is exclusive and the minimum is inclusive
 }
 
 
@@ -35,4 +35,4 @@ module.exports = {
   atlasDB,
   localDB,
   linerImgLink
-};
+}

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-const mongoose_delete = require('mongoose-delete');
+const mongoose_delete = require('mongoose-delete')
 
 const ProfileSchema = new Schema({
     displayName: {type: String},

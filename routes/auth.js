@@ -1,14 +1,14 @@
-const express = require('express');
-const router = express.Router();
-const Renter = require('../models/Renter');
-const verify = require('../middleware/verify');
+const express = require('express')
+const router = express.Router()
+const Renter = require('../models/Renter')
+const verify = require('../middleware/verify')
 const {register, googleLogin, forgotPassword, resetPassword} = require('../controllers/auth')
-require('dotenv').config();
+require('dotenv').config()
 
 
 const sendMail = require('../controllers/sendMail')
 
-const { ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD, MAIL_HOST, MAIL_PORT } = process.env;
+const { ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD, MAIL_HOST, MAIL_PORT } = process.env
 
 // @route /api/auth
 // @ method: POST
@@ -20,12 +20,12 @@ router.post('/register', register)
 // @ access: private
 router.get('/', verify, async (req, res) => {
   try {
-    const renter = await Renter.findById(req.userId).select('-password');
-    return res.json({ success: true, renter });
+    const renter = await Renter.findById(req.userId).select('-password')
+    return res.json({ success: true, renter })
   } catch (error) {
     return res.json({success: false, message: 'Internal Server Error'})
   } 
-});
+})
 
 
 // @route /api/auth/facebook
@@ -83,4 +83,4 @@ router.get('/search', async (req, res) => {
   }
 })
 
-module.exports = router;
+module.exports = router

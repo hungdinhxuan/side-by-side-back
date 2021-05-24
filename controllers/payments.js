@@ -1,15 +1,15 @@
-const payments = require('../models/Payment');
+const payments = require('../models/Payment')
 
 class PaymentController {
   get(req, res, next) {
     payments
       .find({})
       .then((payment) => {
-        res.json(payment);
+        res.json(payment)
       })
       .catch((err) => {
-        res.json({ err });
-      });
+        res.json({ err })
+      })
   }
 //   name: {type: String},
 //   cardNumber: {type: String},
@@ -24,23 +24,23 @@ class PaymentController {
         paymentId: req.body.paymentId,
       })
       .then((payment) => {
-        res.json({sucess:`Created ${payment}`});
+        res.json({sucess:`Created ${payment}`})
       })
       .catch((err) => {
-        res.json(err);
-      });
+        res.json(err)
+      })
   }
   update(req, res, next) {}
   delete(req, res, next) {
     payments
       .deleteOne({ _id: req.id })
       .then((payment) => {
-        res.json({ success: `Deleted ${payment}` });
+        res.json({ success: `Deleted ${payment}` })
       })
       .catch((err) => {
-        res.json({ error: 'Server error' });
-      });
+        res.json({ error: 'Server error' })
+      })
   }
 }
 
-module.exports = new PaymentController();
+module.exports = new PaymentController()

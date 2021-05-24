@@ -1,7 +1,7 @@
 module.exports = {
     rules: {
         quotes: [2, 'single'],
-        semi: 0,
+        semi: [2, 'never'],
     },
     env: {
         es6: true

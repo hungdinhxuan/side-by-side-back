@@ -1,18 +1,18 @@
 module.exports = (app) => {
   
-  const passport = require('passport');
-  const FacebookStrategy = require('passport-facebook').Strategy;
+  const passport = require('passport')
+  const FacebookStrategy = require('passport-facebook').Strategy
   
-  app.use(passport.initialize());
-  app.use(passport.session());
+  app.use(passport.initialize())
+  app.use(passport.session())
 
   passport.serializeUser(function (user, done) {
-    done(null, user);
-  });
+    done(null, user)
+  })
 
   passport.deserializeUser(function (user, done) {
-    done(null, user);
-  });
+    done(null, user)
+  })
 
   passport.use(
     new FacebookStrategy(
@@ -28,8 +28,8 @@ module.exports = (app) => {
         //   return cb(err, user);
         // });
         
-        return cb(null, profile);
+        return cb(null, profile)
       }
     )
-  );
-};
+  )
+}

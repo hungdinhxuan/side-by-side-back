@@ -1,15 +1,15 @@
-const profiles = require('../models/Profile');
+const profiles = require('../models/Profile')
 
 class ProfileController {
   get(req, res, next) {
     profiles
       .find({})
       .then((profile) => {
-        res.json(profile);
+        res.json(profile)
       })
       .catch((err) => {
-        res.status(500).json({ err });
-      });
+        res.status(500).json({ err })
+      })
   }
 //   displayName: {type: String},
 //   describe: {type: String},
@@ -26,23 +26,23 @@ class ProfileController {
         avatar: req.body.avatar,
       })
       .then((profile) => {
-        res.json(`Created ${profile}`);
+        res.json(`Created ${profile}`)
       })
       .catch((err) => {
-        res.json(err);
-      });
+        res.json(err)
+      })
   }
   update(req, res, next) {}
   delete(req, res, next) {
     profiles
       .deleteOne({ _id: req.id })
       .then((profile) => {
-        res.json({ success: `Deleted ${profile}` });
+        res.json({ success: `Deleted ${profile}` })
       })
       .catch((err) => {
-        res.json({ error: 'Server error' });
-      });
+        res.json({ error: 'Server error' })
+      })
   }
 }
 
-module.exports = new ProfileController();
+module.exports = new ProfileController()
