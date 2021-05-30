@@ -82,18 +82,20 @@ class PlayerController {
       console.log('had results')
       let index = 0
       let line
+      const players = []
       while ((line = linerImgLink.next())) {
-        const player = await Player.create({
+        players.push({
           avatar: line.toString('utf-8'),
           firstName: results[index].name.first,
           lastName: results[index].name.last,
           city: results[index].location.city,
           nation: results[index].location.country,
-          price: Math.floor(Math.random() * (10000000 - 10000) + 10000),
+          price: Math.floor(Math.random() * (1000000 - 10000) + 10000),
           renterId: renter[index]._id,
         })
         index++
       }
+      const player = await Player.insertMany(players)
       return res.json({ success: true, message: 'Created sample player successful' })
     } catch (error) {
       return res

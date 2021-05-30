@@ -12,7 +12,7 @@ router.post('/create-sample', PlayerController.createSample)
 // @route GET /api/player/destroy
 // @desc destroy all Player
 // @access private
-router.get('/destroy',  PlayerController.destroy)
+router.delete('/destroy',  PlayerController.destroy)
 router.get('/', PlayerController.get)
 
 module.exports = router

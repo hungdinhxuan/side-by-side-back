@@ -12,6 +12,6 @@ router.get('/', verify, renterController.get)
 router.post('/create-sample', renterController.createSample)
 
 
-router.get('/destroy', renterController.destroy)
+router.delete('/destroy', renterController.destroy)
 
 module.exports = router
