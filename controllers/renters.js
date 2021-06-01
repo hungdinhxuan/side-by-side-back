@@ -1,6 +1,7 @@
 const Renter = require('../models/Renter')
 const PAGE_SIZE = 50
 const axios = require('axios')
+const argon2 = require('argon2')
 
 class RenterController {
   async get(req, res) {
@@ -38,7 +39,7 @@ class RenterController {
       let newRenter = await Renter.create({
         username,
         email,
-        password,
+        password: await argon2.hash(password),
         name,
         gender,
       })
@@ -83,7 +84,7 @@ class RenterController {
       for(let i = 0; i < 1000; i++){
         renters.push({
           username: `renter${i}_${results[i].login.username}`,
-          password: 'zodiac',
+          password: await argon2.hash('zodiac'),
           email:  Math.random().toString() +  results[i].email,
           name: results[i].name.first + ' ' + results[i].last,
           genders: results[i].gender
@@ -116,3 +117,4 @@ class RenterController {
 }
 
 module.exports = new RenterController()
+
