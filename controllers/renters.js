@@ -52,8 +52,7 @@ class RenterController {
 
   update(req, res, next) {}
   delete(req, res, next) {
-    Renter
-      .deleteOne({ _id: req.id })
+    Renter.deleteOne({ _id: req.id })
       .then((renter) => {
         res.json({ success: `Deleted ${renter}` });
       })
@@ -62,11 +61,17 @@ class RenterController {
       });
   }
   async destroy(req, res) {
-   try {
-      const renter = await Renter.remove({})
-      return res.json({ success: true, message: 'Removed Renter table'})
+    try {
+      const renter = await Renter.remove({});
+      return res.json({ success: true, message: "Removed Renter table" });
     } catch (error) {
-      return res.status(500).json({success: false, message: 'Internal Server Error', error: error})
+      return res
+        .status(500)
+        .json({
+          success: false,
+          message: "Internal Server Error",
+          error: error,
+        });
     }
   }
 }
