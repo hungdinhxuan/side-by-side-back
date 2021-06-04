@@ -18,18 +18,18 @@ exports.googleLogin = async (req, res, next) => {
       audience: `${process.env.GOOGLE_CLIENT_ID}`,
     })
     const { email_verified, name, email, picture } = response.payload
-    console.log(response.payload)
+    
     if (email_verified) {
       let renter = await Renter.findOne({ email })
       if (!renter) {
-        let newRenter = await Renter.create({
+          const newRenter = await Renter.create({
           username: `google_${email}`,
           password: `${Math.random()}`,
           email,
           name,
         })
       }
-      const token = jwt.sign({ email }, privateKey, {
+      const token = jwt.sign({ renterId: renter._id }, privateKey, {
         algorithm: 'RS256',
       })
       return res.json({
@@ -45,7 +45,7 @@ exports.googleLogin = async (req, res, next) => {
     console.log(error)
     return res
       .status(500)
-      .json({ success: true, message: 'Internal Server Error', error: error })
+      .json({ success: false, message: 'Internal Server Error', error: error })
   }
 }
 

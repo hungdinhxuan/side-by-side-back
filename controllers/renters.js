@@ -5,19 +5,32 @@ const argon2 = require('argon2')
 
 class RenterController {
   async get(req, res) {
-    const page = req.query.page
+    // const page = req.query.page
 
-    if (page) {
-      let skip = (page - 1) * PAGE_SIZE
-      try {
-        let renter = await Renter.find({}).skip(skip).limit(PAGE_SIZE)
-        return res.json(renter)
-      } catch (error) {
-        return res
-          .status(500)
-          .json({ success: false, message: 'Internal Server Error' })
+    // if (page) {
+    //   let skip = (page - 1) * PAGE_SIZE
+    //   try {
+    //     let renter = await Renter.find({}).skip(skip).limit(PAGE_SIZE)
+    //     return res.json(renter)
+    //   } catch (error) {
+    //     return res
+    //       .status(500)
+    //       .json({ success: false, message: 'Internal Server Error' })
+    //   }
+    // }
+    try {
+      const renter = await Renter.findById(req.user).select('-password')
+      if(!renter){
+        return res.status(404).json({ success: false, message: 'User is not exist or deleted'})
       }
+      return res.json({ success: true, data: renter})
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ success: false, message: 'Internal Server Error', error})
     }
+    
+    
   }
   async post(req, res) {
     const { username, email, password, name, gender } = req.body
@@ -47,7 +60,7 @@ class RenterController {
         .status(201)
         .json({ success: true, message: 'Sign up successful !' })
     } catch (error) {
-      res
+      return res
         .status(500)
         .json({ success: false, message: 'Internal Server Error' })
     }

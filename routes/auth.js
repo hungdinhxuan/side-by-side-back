@@ -20,7 +20,7 @@ router.get('/login/failure', (req, res) => {
 // @ access: public
 router.post('/login', passport.authenticate('local', {failureRedirect: '/api/auth/login/failure' }), (req, res) => {
   
-  const token = jwt.sign({ user: req.user.username }, privateKey, {
+  const token = jwt.sign({ renterId: req.user._id }, privateKey, {
     algorithm: 'RS256',
   })
   return res.json({
