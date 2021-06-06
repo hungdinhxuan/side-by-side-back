@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Renter = require('../models/Renter')
 const verify = require('../middleware/verify')
-const {register, googleLogin, forgotPassword, resetPassword} = require('../controllers/auth')
+const {register, googleLogin, forgotPassword, resetPassword, changePassword} = require('../controllers/auth')
 require('dotenv').config()
 const passport = require('passport')
 const {privateKey} = require('../config')
@@ -91,6 +91,11 @@ router.post('/forgot-password', forgotPassword)
 // @ method: GET
 // @ access: public
 router.get('/reset-password', resetPassword)
+
+// @route /api/auth/change-password
+// @ method: PATCH
+// @ access: private
+router.patch('/change-password', verify, changePassword)
 
 
 router.get('/search', async (req, res) => {

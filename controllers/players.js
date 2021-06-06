@@ -7,8 +7,9 @@ const Renter = require('../models/Renter')
 
 class PlayerController {
   async get(req, res, next) {
-    const page = req.query.page
-
+    
+    const {page, id} = req.query
+    
     if (page) {
       let skip = (page - 1) * PAGE_SIZE
       try {
@@ -22,6 +23,9 @@ class PlayerController {
           .status(500)
           .json({ success: false, message: 'Internal Server Error' })
       }
+    }
+    if(id){
+      return res.json({success: true, message: 'Player'})
     }
   }
 

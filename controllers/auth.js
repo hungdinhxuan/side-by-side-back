@@ -57,6 +57,7 @@ exports.googleLogin = async (req, res, next) => {
 }
 
 exports.register = rentersController.post
+exports.changePassword = rentersController.patch
 
 exports.activateAccount = (req, res) => {
   const { token } = req.body

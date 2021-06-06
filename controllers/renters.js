@@ -29,9 +29,30 @@ class RenterController {
         .status(500)
         .json({ success: false, message: 'Internal Server Error', error})
     }
+  }
+
+  async patch(req, res, next){
     
+    const {password, newPassword} = req.body
+    console.log(password, newPassword)
+    try {
+      const renter = await Renter.findOne({_id: req.user})
+      if(!renter){
+        return res.status(403).json({success: false, message: 'Người dùng này không tồn tại'})
+      }
+      if(!argon2.verify(renter.password, password)){
+        return res.status(403).json({success: false, message: 'Mật khẩu không chính xác'})
+      }
+      const newRenter = await Renter.findByIdAndUpdate({_id: req.user}, {password: await argon2.hash(newPassword)}) 
+      return res.json({ success: true, message: 'Mật khẩu đã được cập nhật thành công', newRenter})
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ success: false, message: 'Internal Server Error', error})
+    }
     
   }
+
   async post(req, res) {
     const { username, email, password, name, gender } = req.body
     try {

@@ -11,7 +11,8 @@ module.exports = (app) => {
         if (!renter) {
           return done(null, false)
         }
-        if (!argon2.verify(renter.password, password)) {
+        
+        if (!await argon2.verify(renter.password, password)) {
           return done(null, false)
         }
         return done(null, renter)
