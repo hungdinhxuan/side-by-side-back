@@ -8,5 +8,5 @@ const WalletSchema = new Schema({
     
 }, {timestamps: true})
 
-WalletSchema.plugin(WalletSchema)
+WalletSchema.plugin(mongoose_delete)
 module.exports = mongoose.model('wallets', WalletSchema)

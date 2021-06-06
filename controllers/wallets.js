@@ -1,8 +1,8 @@
-const wallets = require('../models/Wallet')
+const Wallet = require('../models/Wallet')
 
 class WalletController {
   get(req, res, next) {
-    wallets
+    Wallet
       .find({})
       .then((wallet) => {
         res.json(wallet)
@@ -13,22 +13,16 @@ class WalletController {
   }
 //   renterId : {type: String, required: true},
 //   Balance : {type: Number, default: 0},
-  post(req, res, next) {
-    wallets
-      .create({
-        renterId: req.body.renterId,
-        balance: req.body.balance,
-      })
-      .then((wallet) => {
-        res.json(`Created ${wallet}`)
-      })
-      .catch((err) => {
-        res.json(err)
-      })
+  async post(renterId) {
+    try {
+      await Wallet.create({renterId})
+    } catch (error) {
+      return res.status(500).json({ success: false, message: 'Internal Server Error'})
+    }
   }
   update(req, res, next) {}
   delete(req, res, next) {
-    wallets
+    Wallet
       .deleteOne({ _id: req.id })
       .then((wallet) => {
         res.json({ success: `Deleted ${wallet}` })
