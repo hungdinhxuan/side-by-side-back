@@ -15,7 +15,7 @@ class PlayerController {
         let players = await Player.find({})
           .skip(skip)
           .limit(PAGE_SIZE)
-          .populate('renterId', ['username'])
+          .populate('renterId', ['name', 'gender', 'city', 'nation', 'nickName'])
         return res.json(players)
       } catch (error) {
         return res
@@ -31,8 +31,6 @@ class PlayerController {
         avatar: req.body.avatar,
         firstname: req.body.firstname,
         lastname: req.body.lastname,
-        city: req.body.city,
-        nation: req.body.nation,
         renterId: req.body.renterID,
       })
       return res.json({ success: true, message: `Created ${player}` })
@@ -88,8 +86,6 @@ class PlayerController {
           avatar: line.toString('utf-8'),
           firstName: results[index].name.first,
           lastName: results[index].name.last,
-          city: results[index].location.city,
-          nation: results[index].location.country,
           price: Math.floor(Math.random() * (1000000 - 10000) + 10000),
           renterId: renter[index]._id,
         })

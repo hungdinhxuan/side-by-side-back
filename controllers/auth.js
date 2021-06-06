@@ -7,11 +7,11 @@ const sendMail = require('./sendMail')
 const rentersController = require('./renters')
 const argon2 = require('argon2')
 
+
 require('dotenv').config()
 
 
 exports.googleLogin = async (req, res, next) => {
-  console.log(req.body)
   const { tokenId } = req.body
   console.log(req.body)
   try {
@@ -24,17 +24,13 @@ exports.googleLogin = async (req, res, next) => {
     if (email_verified) {
       let renter = await Renter.findOne({ email })
       if (!renter) {
-          try {
             const newRenter = await Renter.create({
               username: `google_${email}`,
-              password: argon2.hash(`${Math.random()}`),
               email,
+              password: argon2.hash(`${Math.random()}`),
               name,
+              avatar:picture,
             })
-            console.log('Sign Up successfully!') 
-          } catch (error) {
-            return res.status(406).json({success: true, message: 'Sign up error', error: error})
-          }
       }
       const token = jwt.sign({ renterId: renter._id }, privateKey, {
         algorithm: 'RS256',

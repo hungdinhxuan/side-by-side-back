@@ -88,9 +88,9 @@ router.post('/sendmail', async (req, res) => {
 router.post('/forgot-password', forgotPassword)
 
 // @route /api/auth/reset-password
-// @ method: GET
+// @ method: PATCH
 // @ access: public
-router.get('/reset-password', resetPassword)
+router.patch('/reset-password', resetPassword)
 
 
 router.get('/search', async (req, res) => {

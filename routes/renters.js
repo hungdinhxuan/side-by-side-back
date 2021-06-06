@@ -6,6 +6,8 @@ const renters = require('../models/Renter')
 
 router.get('/', verify, renterController.get)
 
+router.patch('/general', verify, renterController.patchGeneral)
+
 // @route POST /api/renter/create-sample
 // @desc create sample renters
 // @access public

@@ -21,11 +21,72 @@ require('dotenv').config()
 const frontendHost = 'http://localhost:3000'
 const atlasDB = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.rrcyu.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
 const localDB = 'mongodb://localhost:27017/SideBySideDB'
-function getRandomInt(min, max) {
-  min = Math.ceil(min)
-  max = Math.floor(max)
-  return Math.floor(Math.random() * (max - min) + min) //The maximum is exclusive and the minimum is inclusive
-}
+const getListCity = ['An Giang',
+'Bà Rịa Vũng Tàu',
+'Bình Dương',
+'Bình Phước',
+'Bình Thuận',
+'Bình Định',
+'Bạc Liêu',
+'Bắc Cạn',
+'Bắc Giang',
+'Bắc Ninh',
+'Bến Tre',
+'Cao Bằng',
+'Cà Mau',
+'Cần Thơ',
+'Đà Nẵng',
+'Đăk Lăk',
+'Điện Biên',
+'Đồng Nai',
+'Đồng Tháp',
+'Gia Lai',
+'Hà Giang',
+'Hà Nam',
+'Hà Nội',
+'Hà Tây',
+'Hà Tĩnh',
+'Hà Đông',
+'Hòa Bình',
+'Hưng Yên',
+'Hạ Long',
+'Hải Dương',
+'Hải Phòng',
+'Hồ Chí Minh',
+'Khánh Hòa',
+'Kiên Giang',
+'KonTum',
+'Lai Châu',
+'Long An',
+'Lào Cai',
+'Lâm Đồng',
+'Lạng Sơn',
+'Nam Định',
+'Nghệ An',
+'Ninh Bình',
+'Ninh Thuận',
+'Phú Thọ',
+'Phú Yên',
+'Quảng Bình',
+'Quảng Nam',
+'Quảng Ngãi',
+'Quảng Ninh',
+'Quảng Trị',
+'Sóc Trăng',
+'Sơn La',
+'Thanh Hóa',
+'Thái Bình',
+'Thái Nguyên',
+'Thừa Thiên Huế',
+'Tiền Giang',
+'Trà Vinh',
+'Tuyên Quang',
+'Tây Ninh',
+'Vĩnh Long',
+'Vĩnh Phúc',
+'Yên Bái',
+'Khác']
+
 
 
 module.exports = {
@@ -34,5 +95,6 @@ module.exports = {
   frontendHost,
   atlasDB,
   localDB,
-  linerImgLink
+  linerImgLink,
+  getListCity
 }
