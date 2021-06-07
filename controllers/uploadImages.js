@@ -1,9 +1,16 @@
 const multer = require('multer')
 const path = require('path')
 const {destination} = require('../config')
+const fs = require('fs')
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    try {
+      fs.mkdirSync(destination)  
+    } catch (error) {
+      
+    }
+
     cb(null, destination)
   },
   filename: (req, file, cb) => {
