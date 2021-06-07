@@ -24,10 +24,10 @@ exports.googleLogin = async (req, res, next) => {
     if (email_verified) {
       let renter = await Renter.findOne({ email })
       if (!renter) {
-            const newRenter = await Renter.create({
+            renter = await Renter.create({
               username: `google_${email}`,
               email,
-              password: argon2.hash(`${Math.random()}`),
+              password: await argon2.hash(`${Math.random()}`),
               name,
               avatar:picture,
             })

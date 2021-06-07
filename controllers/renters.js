@@ -53,7 +53,7 @@ class RenterController {
         renter = await Renter.findByIdAndUpdate(req.user, {avatar:  path.join(__dirname, `../public/images/${req.file.filename}`)})
         return res.json({success: true, message: 'ok', path: path.join(__dirname, `../public/images/${req.file.filename}`)})
       } catch (error) {
-        fs.futimesSync(req.file.path)
+        
         return res.status(500).json({success: false, message: 'Internal Server Error'})
       }
 
