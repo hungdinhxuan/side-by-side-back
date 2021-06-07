@@ -59,6 +59,10 @@ class RenterController {
 
     })
   }
+
+  async rent(req, res) {
+    
+  }
   
   async get(req, res) {
     // const page = req.query.page
