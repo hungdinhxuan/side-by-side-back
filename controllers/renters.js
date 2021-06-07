@@ -11,14 +11,16 @@ const path = require('path')
 class RenterController {
     uploadAvatar(req, res, next) {
     uploadSingle(req, res, async function (err) {
+      const files = fs.readFileSync(__dirname)
       if (err instanceof multer.MulterError) {
         // A Multer error occurred when uploading.
         console.log(err)
-        return res.status(400).json({success: false, err, message: 'error1'})
+        
+        return res.status(400).json({success: false, err, message: 'error1', files})
       } else if (err) {
         // An unknown error occurred when uploading.
         console.log(err)
-        return res.status(400).json({success: false, err, message: 'error2'})
+        return res.status(400).json({success: false, err, message: 'error2', files})
       }
    
       // Everything went fine.
