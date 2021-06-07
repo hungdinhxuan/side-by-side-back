@@ -2,10 +2,11 @@ const express = require('express')
 const router = express.Router()
 const multer = require('multer')
 const path = require('path')
+const {destination} = require('../config')
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, './public/images')
+    cb(null, destination)
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + '--' + file.originalname)
