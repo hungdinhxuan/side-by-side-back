@@ -1,67 +1,56 @@
 const Renter = require('../models/Renter')
 const PAGE_SIZE = 50
-const axios = require('axios')
 const argon2 = require('argon2')
 const WalletsController = require('./wallets')
 const Wallet = require('../models/Wallet')
-const { uploadSingle } = require('./uploadImages')
-const fs = require('fs')
+const {uploadSingle} = require('./uploadImages')
 const multer = require('multer')
+const fs = require('fs')
+const path = require('path')
 
 class RenterController {
-   async uploadAvatar(req, res, next) {
-
-     uploadSingle(req, res, async function (err) {
+    uploadAvatar(req, res, next) {
+    uploadSingle(req, res, async function (err) {
       if (err instanceof multer.MulterError) {
         // A Multer error occurred when uploading.
-
-        return res
-          .status(413)
-          .json({
-            success: false,
-            message: 'Ảnh quá lớn, kích thước ảnh phải <= 500KB',
-          })
+        console.log(err)
+        return res.status(400).json({success: false, err})
       } else if (err) {
         // An unknown error occurred when uploading.
-
-        return res
-          .status(415)
-          .json({
-            success: false,
-            message: 'Chỉ định dạng ảnh  là .png, .jpg và .jpeg được cho phép ',
-          })
+        console.log(err)
+        return res.status(400).json({success: false, err})
       }
+   
+      // Everything went fine.
+      console.log(req.user)
+      console.log(req.file)
       var renter
       try {
-        renter = await Renter.findById(req.user)
+        renter = await Renter.findById(req.user)  
       } catch (error) {
+        fs.futimesSync(req.file.path)
         return res.status(500).json({success: false, message: 'Internal Server Error'})
       }
-      /// Xoa bo avatar cu
+      
+      // Xóa thư mục cũ
       try {
         fs.unlinkSync(renter.avatar)
       } catch (error) {
         
       }
 
+      // Update
       try {
-        renter = await Renter.findByIdAndUpdate(req.user, {avatar: `http://localhost:3000/public/images/${req.file.filename}`})
-        if(renter){
-          return res.json({
-            success: true,
-            message: 'Ảnh của bạn đã được tải lên thành công',
-          })
-        }else
-        {
-          return res.status(500).json({success: false, message: 'Internal Server Error'})  
-        }
+        renter = await Renter.findByIdAndUpdate(req.user, {avatar:  path.join(__dirname, `../public/images/${req.file.filename}`)})
+        return res.json({success: true, message: 'ok', path: path.join(__dirname, `../public/images/${req.file.filename}`)})
       } catch (error) {
+        fs.futimesSync(req.file.path)
         return res.status(500).json({success: false, message: 'Internal Server Error'})
       }
 
-      
     })
   }
+  
   async get(req, res) {
     // const page = req.query.page
 
@@ -195,12 +184,10 @@ class RenterController {
         .status(206)
         .json({ success: true, message: 'Cập nhật thành công' })
     } catch (error) {
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: 'Máy chủ gặp sự cố ! Vui lòng thử lại sau ít phút !',
-        })
+      return res.status(500).json({
+        success: false,
+        message: 'Máy chủ gặp sự cố ! Vui lòng thử lại sau ít phút !',
+      })
     }
   }
 
@@ -221,22 +208,19 @@ class RenterController {
       const renter = await Renter.remove({})
       return res.json({ success: true, message: 'Removed Renter table' })
     } catch (error) {
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: 'Internal Server Error',
-          error: error,
-        })
+      return res.status(500).json({
+        success: false,
+        message: 'Internal Server Error',
+        error: error,
+      })
     }
   }
 
   async createSample(req, res) {
     try {
-    
       const renters = []
       const wallets = []
-      
+
       for (let i = 0; i < 9993; i++) {
         renters.push({
           username: `renter${i}`,
