@@ -4,8 +4,64 @@ const axios = require('axios')
 const argon2 = require('argon2')
 const WalletsController = require('./wallets')
 const Wallet = require('../models/Wallet')
+const { uploadSingle } = require('./uploadImages')
+const fs = require('fs')
+const multer = require('multer')
 
 class RenterController {
+   async uploadAvatar(req, res, next) {
+
+     uploadSingle(req, res, async function (err) {
+      if (err instanceof multer.MulterError) {
+        // A Multer error occurred when uploading.
+
+        return res
+          .status(413)
+          .json({
+            success: false,
+            message: 'Ảnh quá lớn, kích thước ảnh phải <= 500KB',
+          })
+      } else if (err) {
+        // An unknown error occurred when uploading.
+
+        return res
+          .status(415)
+          .json({
+            success: false,
+            message: 'Chỉ định dạng ảnh  là .png, .jpg và .jpeg được cho phép ',
+          })
+      }
+      var renter
+      try {
+        renter = await Renter.findById(req.user)
+      } catch (error) {
+        return res.status(500).json({success: false, message: 'Internal Server Error'})
+      }
+      /// Xoa bo avatar cu
+      try {
+        fs.unlinkSync(renter.avatar)
+      } catch (error) {
+        
+      }
+
+      try {
+        renter = await Renter.findByIdAndUpdate(req.user, {avatar: `http://localhost:3000/public/images/${req.file.filename}`})
+        if(renter){
+          return res.json({
+            success: true,
+            message: 'Ảnh của bạn đã được tải lên thành công',
+          })
+        }else
+        {
+          return res.status(500).json({success: false, message: 'Internal Server Error'})  
+        }
+      } catch (error) {
+        return res.status(500).json({success: false, message: 'Internal Server Error'})
+      }
+
+      
+    })
+  }
   async get(req, res) {
     // const page = req.query.page
 
@@ -22,37 +78,53 @@ class RenterController {
     // }
     try {
       const renter = await Renter.findById(req.user).select('-password')
-      if(!renter){
-        return res.status(404).json({ success: false, message: 'User is not exist or deleted'})
+      if (!renter) {
+        return res
+          .status(404)
+          .json({ success: false, message: 'User is not exist or deleted' })
       }
-      return res.json({ success: true, data: renter})
+      return res.json({ success: true, data: renter })
     } catch (error) {
       return res
         .status(500)
-        .json({ success: false, message: 'Internal Server Error', error})
+        .json({ success: false, message: 'Internal Server Error', error })
     }
   }
 
-  async patch(req, res, next){
-    
-    const {password, newPassword} = req.body
+  async patch(req, res, next) {
+    const { password, newPassword } = req.body
+    if (!password || !newPassword) {
+      return res
+        .status(403)
+        .json({ success: false, message: 'Mật khẩu không được để trống' })
+    }
     console.log(password, newPassword)
     try {
-      const renter = await Renter.findOne({_id: req.user})
-      if(!renter){
-        return res.status(403).json({success: false, message: 'Người dùng này không tồn tại'})
+      const renter = await Renter.findOne({ _id: req.user })
+      if (!renter) {
+        return res
+          .status(403)
+          .json({ success: false, message: 'Người dùng này không tồn tại' })
       }
-      if(!argon2.verify(renter.password, password)){
-        return res.status(403).json({success: false, message: 'Mật khẩu không chính xác'})
+      if (!(await argon2.verify(renter.password, password))) {
+        return res
+          .status(403)
+          .json({ success: false, message: 'Mật khẩu không chính xác' })
       }
-      const newRenter = await Renter.findByIdAndUpdate({_id: req.user}, {password: await argon2.hash(newPassword)}) 
-      return res.json({ success: true, message: 'Mật khẩu đã được cập nhật thành công', newRenter})
+      const newRenter = await Renter.findByIdAndUpdate(
+        { _id: req.user },
+        { password: await argon2.hash(newPassword) }
+      )
+      return res.json({
+        success: true,
+        message: 'Mật khẩu đã được cập nhật thành công',
+        newRenter,
+      })
     } catch (error) {
       return res
         .status(500)
-        .json({ success: false, message: 'Internal Server Error', error})
+        .json({ success: false, message: 'Internal Server Error', error })
     }
-    
   }
 
   async post(req, res) {
@@ -73,8 +145,8 @@ class RenterController {
           .status(406)
           .json({ success: false, message: 'Email is already existed' })
       }
-      
-      password =  await argon2.hash(password)
+
+      password = await argon2.hash(password)
       console.log('here' + password)
       let newRenter = await Renter.create({
         username,
@@ -86,7 +158,7 @@ class RenterController {
       WalletsController.post(newRenter._id)
       return res
         .status(201)
-        .json({ success: true, message: 'Sign up successful !'})
+        .json({ success: true, message: 'Sign up successful !' })
     } catch (error) {
       return resWallet
         .status(500)
@@ -95,13 +167,17 @@ class RenterController {
   }
 
   async patchGeneral(req, res) {
-    let {id, name, gender, birthDate , nickName, city, nation} = req.body
-    
-    if(!id ){
-      return res.status(400).json({ success: false, message: 'Người dùng không hợp lệ !! ' })
+    let { id, name, gender, birthDate, nickName, city, nation } = req.body
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, message: 'Người dùng không hợp lệ !! ' })
     }
-    if(!name){
-      return res.status(400).json({ success: false, message: 'Bạn phải nhập vào họ và tên'})
+    if (!name) {
+      return res
+        .status(400)
+        .json({ success: false, message: 'Bạn phải nhập vào họ và tên' })
     }
     gender = gender || 'Khác'
     nickName = nickName || ''
@@ -109,27 +185,30 @@ class RenterController {
     birthDate = birthDate || '01-01-2000'
     nation = nation || 'Việt Nam'
 
-    console.log({id, name, gender, birthDate , nickName, city, nation})
+    console.log({ id, name, gender, birthDate, nickName, city, nation })
     try {
-      const renter = await Renter.updateOne({_id: id}, {name, genders: gender, birthDate, nickName, city, nations: nation})
-      return res.status(206).json({ success: true, message: 'Cập nhật thành công'})
+      const renter = await Renter.updateOne(
+        { _id: id },
+        { name, genders: gender, birthDate, nickName, city, nations: nation }
+      )
+      return res
+        .status(206)
+        .json({ success: true, message: 'Cập nhật thành công' })
     } catch (error) {
       return res
         .status(500)
-        .json({ success: false, message: 'Máy chủ gặp sự cố ! Vui lòng thử lại sau ít phút !' })
+        .json({
+          success: false,
+          message: 'Máy chủ gặp sự cố ! Vui lòng thử lại sau ít phút !',
+        })
     }
   }
 
-  async patchSecurity(req, res ){
+  async patchSecurity(req, res) {}
 
-  }
-
-  put(req, res) {
-
-  }
+  put(req, res) {}
   delete(req, res, next) {
-    Renter
-      .deleteOne({ _id: req.id })
+    Renter.deleteOne({ _id: req.id })
       .then((renter) => {
         res.json({ success: `Deleted ${renter}` })
       })
@@ -138,37 +217,40 @@ class RenterController {
       })
   }
   async destroy(req, res) {
-   try {
+    try {
       const renter = await Renter.remove({})
-      return res.json({ success: true, message: 'Removed Renter table'})
+      return res.json({ success: true, message: 'Removed Renter table' })
     } catch (error) {
-      return res.status(500).json({success: false, message: 'Internal Server Error', error: error})
+      return res
+        .status(500)
+        .json({
+          success: false,
+          message: 'Internal Server Error',
+          error: error,
+        })
     }
   }
 
   async createSample(req, res) {
     try {
-      const users = await axios.get(
-        'https://randomuser.me/api/?results=1000&gender=female'
-      )
-      const results = users.data.results
+    
       const renters = []
       const wallets = []
-      console.log('ok')
-      for(let i = 0; i < 1000; i++){
+      
+      for (let i = 0; i < 9993; i++) {
         renters.push({
-          username: `renter${i}_${results[i].login.username}`,
+          username: `renter${i}`,
           password: await argon2.hash('zodiac'),
-          email:  Math.random().toString() +  results[i].email,
-          name: results[i].name.first + ' ' + results[i].last,
-          genders: results[i].gender
+          email: `renter${i}@gmail.com`,
+          name: `renter${i}`,
+          genders: 'Nữ',
         })
       }
-
+      console.log('ok')
       let renter = await Renter.insertMany(renters)
-      
-      for(let i = 0; i < renter.length; i++){
-        wallets.push({renterId: renter[i]._id})
+
+      for (let i = 0; i < renter.length; i++) {
+        wallets.push({ renterId: renter[i]._id })
       }
       await Wallet.insertMany(wallets)
       // for(let i = 0; i < 1000; i++) {
@@ -181,19 +263,18 @@ class RenterController {
       //   })
 
       // }
-      return res.json({ success: true, message: 'Created sample renter successful' })
+      return res.json({
+        success: true,
+        message: 'Created sample renter successful',
+      })
     } catch (error) {
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: 'Internal Server Error',
-          error: error,
-        })
+      return res.status(500).json({
+        success: false,
+        message: 'Internal Server Error',
+        error: error,
+      })
     }
   }
-
 }
 
 module.exports = new RenterController()
-

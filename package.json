@@ -25,6 +25,7 @@
     "mongoose": "^5.12.6",
     "mongoose-delete": "^0.5.3",
     "morgan": "^1.10.0",
+    "multer": "^1.4.2",
     "n-readlines": "^1.0.1",
     "nodemailer": "^6.6.0",
     "passport": "^0.4.1",

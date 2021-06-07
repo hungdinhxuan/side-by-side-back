@@ -12,6 +12,7 @@ RENTER:
 POST  public /api/renter/create-sample (Create 1000 samples)
 GET private /api/renter (Get information of a renter) 
 DELETE public /api/renter/destroy (Destroy tables renter)
+POST private /api/renter/upload-avatar (Upload avatar for renter) 
 
 PLAYER:
 POST  public /api/player/create-sample (Create 1000 samples)

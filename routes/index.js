@@ -4,6 +4,7 @@ const authRouter = require('./auth')
 const playersRouter = require('./players')
 const profileRouter = require('./profiles')
 const citiesRouter = require('./cities')
+const uploadsRouter = require('./uploads')
 
 
 module.exports = (app) => {
@@ -13,4 +14,5 @@ module.exports = (app) => {
     app.use('/api/player', playersRouter)
     app.use('/api/profile', profileRouter)
     app.use('/api/city', citiesRouter)
+    app.use('/api/upload', uploadsRouter)
 }

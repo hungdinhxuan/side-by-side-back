@@ -76,20 +76,16 @@ class PlayerController {
   async createSample(req, res) {
     try {
       const renter = await Renter.find({})
-      const users = await axios.get(
-        'https://randomuser.me/api/?results=1000&gender=female'
-      )
-      
-      const results = users.data.results
+     
       console.log('had results')
       let index = 0
       let line
       const players = []
       while ((line = linerImgLink.next())) {
         players.push({
-          avatar: line.toString('utf-8'),
-          firstName: results[index].name.first,
-          lastName: results[index].name.last,
+          avatar: `https://drive.google.com/uc?export=view&id=${line.toString('utf-8')}`,
+          firstName: renter[index].name,
+          lastName: 'undefined',
           price: Math.floor(Math.random() * (1000000 - 10000) + 10000),
           renterId: renter[index]._id,
         })

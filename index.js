@@ -9,6 +9,7 @@ const session = require('express-session')
 const logger = require('morgan')
 const cors = require('cors')
 const passport = require('passport')
+const path = require('path')
 
 const { atlasDB, localDB } = require('./config')
 app.use(cors())
@@ -26,12 +27,13 @@ app.use(logger('dev'))
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+app.use('/public', express.static(path.join(__dirname, 'public')))
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
   done(null, user)
 })
 
-passport.deserializeUser(function(user, done) {
+passport.deserializeUser(function (user, done) {
   done(null, user)
 })
 
@@ -55,5 +57,5 @@ localAuthentication(app)
 routes(app)
 
 app.listen(PORT, () => {
-  console.log('Server is listening on port ' + PORT);
+  console.log('Server is listening on port ' + PORT)
 })
