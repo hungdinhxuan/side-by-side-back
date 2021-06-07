@@ -14,11 +14,11 @@ class RenterController {
       if (err instanceof multer.MulterError) {
         // A Multer error occurred when uploading.
         console.log(err)
-        return res.status(400).json({success: false, err, message: 'error1', dir: fs.readFileSync(__dirname)})
+        return res.status(400).json({success: false, err, message: 'error1'})
       } else if (err) {
         // An unknown error occurred when uploading.
         console.log(err)
-        return res.status(400).json({success: false, err, message: 'error2',  dir: fs.readFileSync(__dirname)})
+        return res.status(400).json({success: false, err, message: 'error2'})
       }
    
       // Everything went fine.
