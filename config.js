@@ -4,7 +4,7 @@ const lineByLine = require('n-readlines')
 const privateKey = fs.readFileSync(path.join(__dirname, '/keys/privateKey.pem'))
 const publicKey = fs.readFileSync(path.join(__dirname, '/keys/publicKey.pem'))
 const linerImgLink = new lineByLine(path.join(__dirname, 'link.txt'))
-const destination = path.join(__dirname, 'public/images')
+const destination = path.resolve(__dirname, 'public/images')
 
 require('dotenv').config()
 // const DB_USERNAME="admin"
