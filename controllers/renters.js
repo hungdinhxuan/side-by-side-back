@@ -11,7 +11,14 @@ const path = require('path')
 class RenterController {
     uploadAvatar(req, res, next) {
     uploadSingle(req, res, async function (err) {
-      const files = fs.readFileSync(__dirname)
+      var files
+      try {
+         files = await fs.readdirSync(__dirname)
+         
+      } catch (error) {
+        return res.status(500).json({success: false, message: 'Internal Server Error', error: error})
+      }
+      
       if (err instanceof multer.MulterError) {
         // A Multer error occurred when uploading.
         console.log(err)
