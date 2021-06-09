@@ -9,7 +9,7 @@
     "routes": [
         {
             
-            "src":"/api/post-submission", "methods": ["POST"], "dest": "<js file>"
+            "src":"/api/upload", "methods": ["POST"], "dest": "routes/uploads.js"
         }
     ]
 }
