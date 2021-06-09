@@ -12,6 +12,6 @@
             "dest": "/"
             
         },
-        {"src":"/api/upload", "methods": ["POST"], "dest": "/api/upload"}
+        {"src":"/api/upload", "methods": ["POST"], "dest": "./index.js"}
     ]
 }
