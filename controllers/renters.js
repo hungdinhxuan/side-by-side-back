@@ -189,9 +189,9 @@ class RenterController {
 
     console.log({ id, name, gender, birthDate, nickName, city, nation })
     try {
-      const renter = await Renter.updateOne(
-        { _id: id },
-        { name, genders: gender, birthDate, nickName, city, nations: nation }
+      const renter = await Renter.findByIdAndUpdate(
+        id,
+        { name, gender: gender, birthDate, nickName, city, nation: nation }
       )
       return res
         .status(206)

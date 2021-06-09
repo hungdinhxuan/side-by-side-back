@@ -10,7 +10,11 @@ const logger = require('morgan')
 const cors = require('cors')
 const passport = require('passport')
 const path = require('path')
-
+const server = require('http').createServer(app)
+const io = require('socket.io')(server, { cors: { origin: '*' } })
+const {publicKey} = require('./config')
+const jwt = require('jsonwebtoken')
+const socket = require('./socket')
 const { atlasDB, localDB } = require('./config')
 app.use(cors())
 app.use(passport.initialize())
@@ -56,6 +60,8 @@ localAuthentication(app)
 
 routes(app)
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log('Server is listening on port ' + PORT)
 })
+
+socket(io)
