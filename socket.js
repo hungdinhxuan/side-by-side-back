@@ -11,10 +11,17 @@ module.exports = (io) => {
     // console.log(socket.id + 'connected')
     socket.on('disconnect', () => {
       // console.log(socket.id + 'disconnected')
+      for(let i = 0; i < listPlayersOnline.length; i++) {
+        for(let key in listPlayersOnline[i]){
+          if (listPlayersOnline[i][key] === socket.id){
+            listPlayersOnline.splice(i, 1)
+          }
+        }
+      }
     })
-    socket.on('xac-thuc', async (token) => {
+    socket.on('validate', async (token) => {
       try {
-        const decoded = await jwt.verify(token, publicKey)
+        const decoded = jwt.verify(token, publicKey)
 
         const { renterId } = decoded
         let obj = {}
