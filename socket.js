@@ -13,8 +13,14 @@ module.exports = (io) => {
       // console.log(socket.id + 'disconnected')
       for(let i = 0; i < listPlayersOnline.length; i++) {
         for(let key in listPlayersOnline[i]){
+
           if (listPlayersOnline[i][key] === socket.id){
-            listPlayersOnline.splice(i, 1)
+            if(listPlayersOnline.length == 1){
+              listPlayersOnline = []
+              break
+            }
+            else
+              listPlayersOnline.splice(i, 1)
           }
         }
       }
