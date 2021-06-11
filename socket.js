@@ -3,31 +3,56 @@ module.exports = (io) => {
   const Renter = require('./models/Renter')
   const { publicKey } = require('./config')
   const jwt = require('jsonwebtoken')
-
+  const socketioJwt = require('socketio-jwt')
   const activateUser = new Set()
   const activateSocketId = new Set()
 
-  io.use(function(socket, next){
-    if (socket.handshake.query && socket.handshake.query.token){
-      jwt.verify(socket.handshake.query.token, publicKey, function(err, decoded) {
-        if (err) return next(new Error('Authentication error'))
-        const { renterId } = decoded
-        activateUser.add(renterId)
-        activateSocketId.add(socket.id)
-        socket.User = renterId
-        console.log('ok')
-        next()
+  io.on('connection', (socket) => {
+    
+    socket.on('authenticate', function (data) {
+      // check data được send tới client
+      jwt.verify(data.token, publicKey, function (err, decoded) {
+        if (!err && decoded) {
+          const {renterId} = decoded
+          socket.User = renterId
+          activateUser.add(renterId)
+          activateSocketId.add(socket.id)
+          console.log('Authenticated socket ', socket.User)
+          
+        }
       })
-    }
-    else {
-      next(new Error('Authentication error'));
-    }    
-  }).on('connection', (socket) => {
-    socket.on('disconnect', () => {
+    })
+
+    socket.on('disconnect', async () => {
       console.log('user disconnected')
       activateSocketId.delete(socket.id)
       activateUser.delete(socket.User)
-      console.log([...activateUser], [...activateSocketId])
+      try {
+        const activePlayer = await Player.find({
+          renterId: { $in: [...activateUser] },
+        })
+          .limit(50)
+          .lean()
+        const inactivePlayer = await Player.find({
+          renterId: { $nin: [...activateUser] },
+        })
+          .limit(50 - activePlayer.length)
+          .lean()
+
+        activePlayer.forEach(
+          (value, index) => (activePlayer[index].status = 'active')
+        )
+        inactivePlayer.forEach(
+          (value, index) => (inactivePlayer[index].status = 'inactive')
+        )
+
+        io.sockets.emit('GET_USERS', {
+          response: activePlayer.concat(inactivePlayer),
+        })
+      } catch (error) {
+        console.log(error)
+        return
+      }
     })
 
     socket.on('GET_USERS', async () => {
@@ -50,7 +75,7 @@ module.exports = (io) => {
           (value, index) => (inactivePlayer[index].status = 'inactive')
         )
 
-        socket.emit('GET_USERS', {
+        io.sockets.emit('GET_USERS', {
           response: activePlayer.concat(inactivePlayer),
         })
       } catch (error) {
@@ -58,6 +83,5 @@ module.exports = (io) => {
         return
       }
     })
-
   })
 }
