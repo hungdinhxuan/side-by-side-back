@@ -7,7 +7,22 @@ module.exports = (io) => {
   const activateUser = new Set()
   const activateSocketId = new Set()
 
-  io.on('connection', (socket) => {
+  io.use(function(socket, next){
+    if (socket.handshake.query && socket.handshake.query.token){
+      jwt.verify(socket.handshake.query.token, publicKey, function(err, decoded) {
+        if (err) return next(new Error('Authentication error'))
+        const { renterId } = decoded
+        activateUser.add(renterId)
+        activateSocketId.add(socket.id)
+        socket.User = renterId
+        console.log('ok')
+        next()
+      })
+    }
+    else {
+      next(new Error('Authentication error'));
+    }    
+  }).on('connection', (socket) => {
     socket.on('disconnect', () => {
       console.log('user disconnected')
       activateSocketId.delete(socket.id)
@@ -44,24 +59,5 @@ module.exports = (io) => {
       }
     })
 
-    socket.on('VALIDATION', (token) => {
-      
-      jwt.verify(token, publicKey, async (err, decoded) => {
-        if (err) {
-          console.log(err)
-          return
-        }
-        const { renterId } = decoded
-        try {
-          activateUser.add(renterId)
-          activateSocketId.add(socket.id)
-          socket.User = renterId
-          console.log('ok')
-        } catch (error) {
-          console.log(error)
-          return
-        }
-      })
-    })
   })
 }
