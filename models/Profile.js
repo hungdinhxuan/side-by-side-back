@@ -4,10 +4,13 @@ const mongoose_delete = require('mongoose-delete')
 
 const ProfileSchema = new Schema({
     displayName: {type: String},
-    describe: {type: String},
+    shortDescribe: {type: String},
+    detailDescribe: {type: String},
     linkHightLight: {type: String},
     avatar: {type: String},
-    playerId: {type: Schema.Types.ObjectId, required: true, ref:'players'}
+    linkSocial: {type: String},
+    availableDevices: {type: String},
+    playerId: {type: Schema.Types.ObjectId, required: true, ref:'players', unique: true}
 }, {timestamps: true})
 
 

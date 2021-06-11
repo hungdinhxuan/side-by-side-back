@@ -27,32 +27,17 @@ module.exports = (io) => {
       console.log('user disconnected')
       activateSocketId.delete(socket.id)
       activateUser.delete(socket.User)
-      // try {
-      //   const activePlayer = await Player.find({
-      //     renterId: { $in: [...activateUser] },
-      //   })
-      //     .limit(50)
-      //     .lean()
-      //   const inactivePlayer = await Player.find({
-      //     renterId: { $nin: [...activateUser] },
-      //   })
-      //     .limit(50 - activePlayer.length)
-      //     .lean()
+    })
 
-      //   activePlayer.forEach(
-      //     (value, index) => (activePlayer[index].status = 'active')
-      //   )
-      //   inactivePlayer.forEach(
-      //     (value, index) => (inactivePlayer[index].status = 'inactive')
-      //   )
-
-      //   io.sockets.emit('GET_USERS', {
-      //     response: activePlayer.concat(inactivePlayer),
-      //   })
-      // } catch (error) {
-      //   console.log(error)
-      //   return
-      // }
+    socket.on('RENT_REQUEST', async (data) => {
+      const {receiver, message} = data
+      /// Gui lai cho nguoi gui thong diep thanh cong
+      socket.emit('SENDER_NOTIFICATION', {response: 'Gui thanh cong'})
+      /// Get socketId
+      const socketId = [...activateSocketId][[...activateUser].indexOf(receiver)]
+      console.log(activateUser)
+      console.log(activateSocketId)
+      io.to(socketId).emit('RECEIVER_NOTIFICATION', {response: `${socket.id} sent : ${message} to ${receiver}`})
     })
 
     socket.on('GET_USERS', async () => {

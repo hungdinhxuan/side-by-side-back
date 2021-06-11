@@ -7,7 +7,7 @@ const PlayerSchema = new Schema({
     firstName: {type: String},
     lastName: {type: String},
     price: {type: Number},
-    renterId: {type: Schema.Types.ObjectId, ref: 'renters'}
+    renterId: {type: Schema.Types.ObjectId, ref: 'renters', unique: true}
 
 }, {timestamps: true})
 
