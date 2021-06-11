@@ -27,32 +27,32 @@ module.exports = (io) => {
       console.log('user disconnected')
       activateSocketId.delete(socket.id)
       activateUser.delete(socket.User)
-      try {
-        const activePlayer = await Player.find({
-          renterId: { $in: [...activateUser] },
-        })
-          .limit(50)
-          .lean()
-        const inactivePlayer = await Player.find({
-          renterId: { $nin: [...activateUser] },
-        })
-          .limit(50 - activePlayer.length)
-          .lean()
+      // try {
+      //   const activePlayer = await Player.find({
+      //     renterId: { $in: [...activateUser] },
+      //   })
+      //     .limit(50)
+      //     .lean()
+      //   const inactivePlayer = await Player.find({
+      //     renterId: { $nin: [...activateUser] },
+      //   })
+      //     .limit(50 - activePlayer.length)
+      //     .lean()
 
-        activePlayer.forEach(
-          (value, index) => (activePlayer[index].status = 'active')
-        )
-        inactivePlayer.forEach(
-          (value, index) => (inactivePlayer[index].status = 'inactive')
-        )
+      //   activePlayer.forEach(
+      //     (value, index) => (activePlayer[index].status = 'active')
+      //   )
+      //   inactivePlayer.forEach(
+      //     (value, index) => (inactivePlayer[index].status = 'inactive')
+      //   )
 
-        io.sockets.emit('GET_USERS', {
-          response: activePlayer.concat(inactivePlayer),
-        })
-      } catch (error) {
-        console.log(error)
-        return
-      }
+      //   io.sockets.emit('GET_USERS', {
+      //     response: activePlayer.concat(inactivePlayer),
+      //   })
+      // } catch (error) {
+      //   console.log(error)
+      //   return
+      // }
     })
 
     socket.on('GET_USERS', async () => {
