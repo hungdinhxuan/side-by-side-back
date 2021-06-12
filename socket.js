@@ -6,21 +6,22 @@ module.exports = (io) => {
   const socketioJwt = require('socketio-jwt')
   const activateUser = new Set()
   const activateSocketId = new Set()
-  const {getNotification, createNotification} = require('./controllers/notifications')
+  const {
+    getNotification,
+    createNotification,
+  } = require('./controllers/notifications')
 
   const messeges = []
   io.on('connection', (socket) => {
-    
     socket.on('authenticate', function (data) {
       // check data được send tới client
       jwt.verify(data.token, publicKey, function (err, decoded) {
         if (!err && decoded) {
-          const {renterId} = decoded
+          const { renterId } = decoded
           socket.User = renterId
           activateUser.add(renterId)
           activateSocketId.add(socket.id)
           console.log('Authenticated socket ', socket.User)
-          
         }
       })
     })
@@ -29,54 +30,82 @@ module.exports = (io) => {
       console.log('user disconnected')
       activateSocketId.delete(socket.id)
       activateUser.delete(socket.User)
+      socket.removeAllListeners()
     })
 
     socket.on('RENT_REQUEST', async (data) => {
-      const {receiver, message, time, cost} = data
+      const { receiver, message, time, cost } = data
       /// Gui lai cho nguoi gui thong diep thanh cong
-      
+
       /// Get socketId
-      
-      try {        
+
+      try {
         const renter = await Renter.findById(socket.User)
-        socket.emit('SENDER_NOTIFICATION', {response: 'Gui thanh cong'})
-        const socketIdReceiver = [...activateSocketId][[...activateUser].indexOf(receiver)]
-        io.to(socketIdReceiver).emit('RECEIVER_NOTIFICATION', {response: `${renter.name} muốn thuê bạn chơi cùng trong vòng ${time} với giá là ${cost}`, sender: socket.User})
+        socket.emit('SENDER_NOTIFICATION', { response: 'Gui thanh cong' })
+        const socketIdReceiver = [...activateSocketId][
+          [...activateUser].indexOf(receiver)
+        ]
+        io.to(socketIdReceiver).emit('RECEIVER_NOTIFICATION', {
+          response: `${renter.name} muốn thuê bạn chơi cùng trong vòng ${time} với giá là ${cost}`,
+          sender: socket.User,
+        })
       } catch (error) {
-        socket.emit('SENDER_NOTIFICATION', {response: 'Gui thất bại ~~ player này không sẵn sàng'})
+        socket.emit('SENDER_NOTIFICATION', {
+          response: 'Gui thất bại ~~ player này không sẵn sàng',
+        })
       }
       // if(createNotification({renterId: receiver, content: `${socket.User} muốn thuê bạn chơi cùng`}))
-
     })
-
-    
 
     // Player cofirm
     socket.on('CONFIRM_RENT_REQUEST', async (data) => {
-      const {sender, time, price} = data
-      const socketIdSender = [...activateSocketId][[...activateUser].indexOf(sender)]
+      const { sender, time, price } = data
+      const socketIdSender = [...activateSocketId][
+        [...activateUser].indexOf(sender)
+      ]
 
       /// Nếu mà player xác nhận thuê thì buộc cả 2 phải JOIN ROOM
-      /// Gửi cho renter id của player 
-      io.to(socketIdSender).emit('JOIN_ROOM', {playerId: socket.User, room: socket.id + socketIdSender})
+      /// Gửi cho renter id của player
+      io.to(socketIdSender).emit('CONFIRM_RENT_REQUEST', {
+        room: socket.User+ '--with--' + sender,
+      })
       /// Gửi cho player id của renter
-      io.to(socket.id).emit('JOIN_ROOM', {renterId: sender, room: socket.id + socketIdSender}) 
+      io.to(socket.id).emit('CONFIRM_RENT_REQUEST', {
+        room: sender + '--with--' + socket.User,
+      })
     })
 
 
-    socket.on('ACCEPT_JOIN_ROOM', async (data) => {
-      socket.join(data)
-      socket.ROOM = data
+    socket.on('JOIN_ROOM', (roomName) => {
+      let split = roomName.split('--with--') // ['username2', 'username1']
+
+      let unique = [...new Set(split)].sort((a, b) => (a < b ? -1 : 1)) // ['username1', 'username2']
+
+      let updatedRoomName = `${unique[0]}--with--${unique[1]}` // 'username1--with--username2'
+      console.log(updatedRoomName)
+      Array.from(socket.rooms)
+        .filter((it) => it !== socket.id)
+        .forEach((id) => {
+          socket.leave(id)
+          socket.removeAllListeners('EMIT_MESSEGES')
+        })
+
+      socket.join(updatedRoomName)
+
+      socket.on('EMIT_MESSEGES', (message) => {
+        Array.from(socket.rooms)
+          .filter((it) => it !== socket.id)
+          .forEach((id) => {
+            socket.to(id).emit('ON_MESSEGES', message)
+          })
+      })
     })
 
+    // socket.on('MESSEGES', async (data) => {
+    //   io.sockets.in(socket.ROOM).emit('MESSEGES', data)
+    // })
 
-    socket.on('MESSEGES', async(data) => {
-      io.sockets.in(socket.ROOM).emit('MESSEGES', data)
-    })
-
-    socket.on('HISTORY_MESSEGE', async (data) => {
-
-    })
+    socket.on('HISTORY_MESSEGE', async (data) => {})
 
     socket.on('GET_USERS', async () => {
       try {
