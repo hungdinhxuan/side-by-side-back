@@ -8,6 +8,6 @@ const NotificationSchema = new Schema({
     isRead: {type: Boolean, required: true, default: false},
 }, {timestamps: true})
 
-HistorySchema.plugin(mongoose_delete)
+NotificationSchema.plugin(mongoose_delete)
 
 module.exports = mongoose.model('notifications', NotificationSchema)
