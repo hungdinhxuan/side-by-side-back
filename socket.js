@@ -6,7 +6,9 @@ module.exports = (io) => {
   const socketioJwt = require('socketio-jwt')
   const activateUser = new Set()
   const activateSocketId = new Set()
+  const {getNotification, createNotification} = require('./controllers/notifications')
 
+  const messeges = []
   io.on('connection', (socket) => {
     
     socket.on('authenticate', function (data) {
@@ -30,14 +32,39 @@ module.exports = (io) => {
     })
 
     socket.on('RENT_REQUEST', async (data) => {
-      const {receiver, message} = data
+      const {receiver, message, time, cost} = data
       /// Gui lai cho nguoi gui thong diep thanh cong
       socket.emit('SENDER_NOTIFICATION', {response: 'Gui thanh cong'})
       /// Get socketId
-      const socketId = [...activateSocketId][[...activateUser].indexOf(receiver)]
-      console.log(activateUser)
-      console.log(activateSocketId)
-      io.to(socketId).emit('RECEIVER_NOTIFICATION', {response: `${socket.id} sent : ${message} to ${receiver}`})
+      const socketIdReceiver = [...activateSocketId][[...activateUser].indexOf(receiver)]
+      // if(createNotification({renterId: receiver, content: `${socket.User} muốn thuê bạn chơi cùng`}))
+      io.to(socketIdReceiver).emit('RECEIVER_NOTIFICATION', {response: `${socket.User} muốn thuê bạn chơi cùng trong vòng ${time} với giá là ${cost}`, sender: socket.User})
+
+    })
+
+    
+
+    // Player cofirm
+    socket.on('CONFIRM_RENT_REQUEST', async (data) => {
+      const {sender, time, price} = data
+      const socketIdSender = [...activateSocketId][[...activateUser].indexOf(sender)]
+
+      /// Nếu mà player xác nhận thuê thì buộc cả 2 phải JOIN ROOM
+      io.to(socketIdSender).emit('JOIN_ROOM')
+      io.to(socket.id).emit('JOIN_ROOM')
+    })
+
+
+    socket.on('MESSEGES', async(data) => {
+      const {sender, receiver, content} = data
+      const socketIdSender = [...activateSocketId][[...activateUser].indexOf(sender)]
+      const socketIdReceiver = [...activateSocketId][[...activateUser].indexOf(receiver)]
+      messeges.push({sender, receiver, content})
+      
+    })
+
+    socket.on('HISTORY_MESSEGE', async (data) => {
+      
     })
 
     socket.on('GET_USERS', async () => {
