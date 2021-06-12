@@ -34,11 +34,18 @@ module.exports = (io) => {
     socket.on('RENT_REQUEST', async (data) => {
       const {receiver, message, time, cost} = data
       /// Gui lai cho nguoi gui thong diep thanh cong
-      socket.emit('SENDER_NOTIFICATION', {response: 'Gui thanh cong'})
+      
       /// Get socketId
-      const socketIdReceiver = [...activateSocketId][[...activateUser].indexOf(receiver)]
+      
+      try {        
+        const renter = await Renter.findById(socket.User)
+        socket.emit('SENDER_NOTIFICATION', {response: 'Gui thanh cong'})
+        const socketIdReceiver = [...activateSocketId][[...activateUser].indexOf(receiver)]
+        io.to(socketIdReceiver).emit('RECEIVER_NOTIFICATION', {response: `${renter.name} muốn thuê bạn chơi cùng trong vòng ${time} với giá là ${cost}`, sender: socket.User})
+      } catch (error) {
+        socket.emit('SENDER_NOTIFICATION', {response: 'Gui thất bại ~~ player này không sẵn sàng'})
+      }
       // if(createNotification({renterId: receiver, content: `${socket.User} muốn thuê bạn chơi cùng`}))
-      io.to(socketIdReceiver).emit('RECEIVER_NOTIFICATION', {response: `${socket.User} muốn thuê bạn chơi cùng trong vòng ${time} với giá là ${cost}`, sender: socket.User})
 
     })
 
@@ -50,21 +57,25 @@ module.exports = (io) => {
       const socketIdSender = [...activateSocketId][[...activateUser].indexOf(sender)]
 
       /// Nếu mà player xác nhận thuê thì buộc cả 2 phải JOIN ROOM
-      io.to(socketIdSender).emit('JOIN_ROOM')
-      io.to(socket.id).emit('JOIN_ROOM')
+      /// Gửi cho renter id của player 
+      io.to(socketIdSender).emit('JOIN_ROOM', {playerId: socket.User, room: socket.id + socketIdSender})
+      /// Gửi cho player id của renter
+      io.to(socket.id).emit('JOIN_ROOM', {renterId: sender, room: socket.id + socketIdSender}) 
+    })
+
+
+    socket.on('ACCEPT_JOIN_ROOM', async (data) => {
+      socket.join(data)
+      socket.ROOM = data
     })
 
 
     socket.on('MESSEGES', async(data) => {
-      const {sender, receiver, content} = data
-      const socketIdSender = [...activateSocketId][[...activateUser].indexOf(sender)]
-      const socketIdReceiver = [...activateSocketId][[...activateUser].indexOf(receiver)]
-      messeges.push({sender, receiver, content})
-      
+      io.sockets.in(socket.ROOM).emit('MESSEGES', data)
     })
 
     socket.on('HISTORY_MESSEGE', async (data) => {
-      
+
     })
 
     socket.on('GET_USERS', async () => {
