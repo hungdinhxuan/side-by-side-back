@@ -14,7 +14,7 @@ const RenterSchema = new Schema({
     nation: {type: String, default: 'Việt Nam', enum: {values: ['Việt Nam']}},
     birthDate: {type: Date, default: '2000-01-01'},
     nickName: {type: String, default: ''},
-    avatar: {type: String, default:'https://dc577.4shared.com/img/zLirxaRAiq/s25/17997bde090/default-avatar'}
+    avatar: {type: String, default:'default-avatar.png'}
 
 }, {timestamps: true})
 

@@ -3,7 +3,7 @@ const PAGE_SIZE = 50
 const axios = require('axios')
 const { linerImgLink, getRandomInt } = require('../config')
 const Renter = require('../models/Renter')
-
+const _ = require('underscore')
 
 class PlayerController {
   async get(req, res, next) {
@@ -81,12 +81,14 @@ class PlayerController {
       let index = 0
       let line
       const players = []
+      const randomPrice = _.range(10000, 1010000, 10000)
+      
       while ((line = linerImgLink.next())) {
         players.push({
           avatar: `https://drive.google.com/uc?export=view&id=${line.toString('utf-8')}`,
           firstName: renter[index].name,
           lastName: 'undefined',
-          price: Math.floor(Math.random() * (1000000 - 10000) + 10000),
+          price: randomPrice[Math.floor(Math.random() * randomPrice.length)],
           renterId: renter[index]._id,
         })
         index++

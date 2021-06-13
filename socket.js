@@ -61,6 +61,7 @@ module.exports = (io) => {
         const socketIdReceiver = [...activateSocketId][
           [...activateUser].indexOf(receiver)
         ]
+        console.log(socketIdReceiver)
         io.to(socketIdReceiver).emit('RECEIVER_NOTIFICATION', {
           response: `${renter.name} muốn thuê bạn chơi cùng trong vòng ${time} với giá là ${cost}`,
           sender: socket.User,

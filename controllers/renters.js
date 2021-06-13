@@ -234,7 +234,7 @@ class RenterController {
       const renters = []
       const wallets = []
 
-      for (let i = 0; i < 9993; i++) {
+      for (let i = 0; i < 1014; i++) {
         renters.push({
           username: `renter${i}`,
           password: await argon2.hash('zodiac'),
