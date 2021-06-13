@@ -7,6 +7,7 @@ const {uploadSingle} = require('./uploadImages')
 const multer = require('multer')
 const fs = require('fs')
 const path = require('path')
+const girlNames = require('../girlNames')
 
 class RenterController {
     uploadAvatar(req, res, next) {
@@ -239,7 +240,7 @@ class RenterController {
           username: `renter${i}`,
           password: await argon2.hash('zodiac'),
           email: `renter${i}@gmail.com`,
-          name: `renter${i}`,
+          name: `${girlNames[i]}`,
           genders: 'Nữ',
         })
       }

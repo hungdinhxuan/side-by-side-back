@@ -85,6 +85,12 @@ module.exports = (io) => {
         [...activateUser].indexOf(sender)
       ]
       console.log(time, price)
+      // for(let value of rentings){
+      //   console.log(value)
+      //   if(!Object.values(value).includes(socket.User)){
+      //     rentings.add({renter: sender, player: socket.User, time: time.split(' ')[0] * 1 * 60 * 60, price: price})
+      //   }
+      // }
       rentings.add({renter: sender, player: socket.User, time: time.split(' ')[0] * 1 * 60 * 60, price: price})
       /// Nếu mà player xác nhận thuê thì buộc cả 2 phải JOIN ROOM
       /// Gửi cho renter id của player
@@ -108,23 +114,26 @@ module.exports = (io) => {
       let unique = [...new Set(split)].sort((a, b) => (a < b ? -1 : 1)) // ['username1', 'username2']
 
       let updatedRoomName = `${unique[0]}--with--${unique[1]}` // 'username1--with--username2'
+
       console.log(socket.adapter.rooms)
+
+
       Array.from(socket.rooms)
         .filter((it) => it !== socket.id)
         .forEach((id) => {
           socket.leave(id)
-          socket.removeAllListeners('EMIT_MESSEGES')
+          socket.removeAllListeners()
         })
 
       socket.join(updatedRoomName)
 
       socket.on('EMIT_MESSEGES', (message) => {
-        // Array.from(socket.rooms)
-        //   .filter((it) => it !== socket.id)
-        //   .forEach((id) => {
-        //     socket.to(id).emit('ON_MESSEGES', message)
-        //   })
-          socket.to(updatedRoomName).emit('ON_MESSEGES', message)
+        Array.from(socket.rooms)
+          .filter((it) => it !== socket.id)
+          .forEach((id) => {
+            socket.to(id).emit('ON_MESSEGES', message)
+          })
+          // socket.to(updatedRoomName).emit('ON_MESSEGES', message)
       })
     })
 

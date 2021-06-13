@@ -86,8 +86,8 @@ class PlayerController {
       while ((line = linerImgLink.next())) {
         players.push({
           avatar: `https://drive.google.com/uc?export=view&id=${line.toString('utf-8')}`,
-          firstName: renter[index].name,
-          lastName: 'undefined',
+          firstName: renter[index].name.split(' ')[0],
+          lastName: renter[index].name.split(' ')[1],
           price: randomPrice[Math.floor(Math.random() * randomPrice.length)],
           renterId: renter[index]._id,
         })
