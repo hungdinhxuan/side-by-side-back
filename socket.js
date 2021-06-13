@@ -21,6 +21,7 @@ module.exports = (io) => {
           socket.User = renterId
           activateUser.add(renterId)
           activateSocketId.add(socket.id)
+
           console.log('Authenticated socket ', socket.User)
         }
       })
@@ -31,6 +32,21 @@ module.exports = (io) => {
       activateSocketId.delete(socket.id)
       activateUser.delete(socket.User)
       socket.removeAllListeners()
+    })
+
+    socket.on('EMIT_AVATAR', async () => {
+      try {
+        console.log('EMIT_AVATAR')
+        const renter = await Renter.findById(socket.User)
+        const player = await Player.findOne({renterId: socket.User})
+        if(player){
+          socket.emit('ON_AVATAR', player.avatar)
+        }else{
+          socket.emit('ON_AVATAR', renter.avatar)
+        }
+      } catch (error) {
+        
+      }
     })
 
     socket.on('RENT_REQUEST', async (data) => {
@@ -93,11 +109,12 @@ module.exports = (io) => {
       socket.join(updatedRoomName)
 
       socket.on('EMIT_MESSEGES', (message) => {
-        Array.from(socket.rooms)
-          .filter((it) => it !== socket.id)
-          .forEach((id) => {
-            socket.to(updatedRoomName).emit('ON_MESSEGES', message)
-          })
+        // Array.from(socket.rooms)
+        //   .filter((it) => it !== socket.id)
+        //   .forEach((id) => {
+        //     socket.to(id).emit('ON_MESSEGES', message)
+        //   })
+          socket.to(updatedRoomName).emit('ON_MESSEGES', message)
       })
     })
 
