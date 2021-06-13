@@ -82,7 +82,7 @@ module.exports = (io) => {
       let unique = [...new Set(split)].sort((a, b) => (a < b ? -1 : 1)) // ['username1', 'username2']
 
       let updatedRoomName = `${unique[0]}--with--${unique[1]}` // 'username1--with--username2'
-      console.log(updatedRoomName)
+      console.log(socket.adapter.rooms)
       Array.from(socket.rooms)
         .filter((it) => it !== socket.id)
         .forEach((id) => {
@@ -96,7 +96,7 @@ module.exports = (io) => {
         Array.from(socket.rooms)
           .filter((it) => it !== socket.id)
           .forEach((id) => {
-            socket.to(id).emit('ON_MESSEGES', message)
+            socket.to(updatedRoomName).emit('ON_MESSEGES', message)
           })
       })
     })
