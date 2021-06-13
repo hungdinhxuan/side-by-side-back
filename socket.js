@@ -12,6 +12,8 @@ module.exports = (io) => {
   } = require('./controllers/notifications')
 
   const messeges = []
+  const rentings = new Set()
+
   io.on('connection', (socket) => {
     socket.on('authenticate', function (data) {
       // check data được send tới client
@@ -65,6 +67,8 @@ module.exports = (io) => {
         io.to(socketIdReceiver).emit('RECEIVER_NOTIFICATION', {
           response: `${renter.name} muốn thuê bạn chơi cùng trong vòng ${time} với giá là ${cost}`,
           sender: socket.User,
+          time, 
+          price: cost
         })
       } catch (error) {
         socket.emit('SENDER_NOTIFICATION', {
@@ -80,7 +84,8 @@ module.exports = (io) => {
       const socketIdSender = [...activateSocketId][
         [...activateUser].indexOf(sender)
       ]
-
+      console.log(time, price)
+      rentings.add({renter: sender, player: socket.User, time: time.split(' ')[0] * 1 * 60 * 60, price: price})
       /// Nếu mà player xác nhận thuê thì buộc cả 2 phải JOIN ROOM
       /// Gửi cho renter id của player
       io.to(socketIdSender).emit('CONFIRM_RENT_REQUEST', {
@@ -92,6 +97,10 @@ module.exports = (io) => {
       })
     })
 
+    socket.on('RENTING', () => {
+      socket.emit('RENTING', [...rentings])
+    })
+    
 
     socket.on('JOIN_ROOM', (roomName) => {
       let split = roomName.split('--with--') // ['username2', 'username1']
