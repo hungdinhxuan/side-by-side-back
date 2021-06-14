@@ -85,14 +85,15 @@ module.exports = (io) => {
         [...activateUser].indexOf(sender)
       ]
       console.log(time, price)
+      const d = new Date()
       if([...rentings].length === 0) {
-        rentings.add({renter: sender, player: socket.User, time: time.split(' ')[0] * 1 * 60 * 60, price: price, room: `${sender}--with--${socket.User}`})
+        rentings.add({renter: sender, player: socket.User, time: new Date( d.setTime(d.getTime() + 1000 * 60 * 60 * time.split(' ')[0] )), price: price, room: `${sender}--with--${socket.User}`})
       }
       for(let value of rentings){
         console.log(value)
         /// Nếu mà player đó chưa được thuê thì thêm vào rentings
         if(!Object.values(value).includes(socket.User)){
-          rentings.add({renter: sender, player: socket.User, time: time.split(' ')[0] * 1 * 60 * 60, price: price, room: `${sender}--with--${socket.User}`})
+          rentings.add({renter: sender, player: socket.User, time: new Date( d.setTime(d.getTime() + 1000 * 60 * 60 * time.split(' ')[0] )), price: price, room: `${sender}--with--${socket.User}`})
         }
       }
       
