@@ -15,6 +15,14 @@ module.exports = (io) => {
   const rentings = new Set()
 
   io.on('connection', (socket) => {
+
+    /// Kiem tra neu het han thi xoa
+    for(let value of rentings){
+      if(new Date(value.time).getTime() - new Date().getTime() < 0){
+        rentings.delete(value)
+      }
+    }
+    
     socket.on('authenticate', function (data) {
       // check data được send tới client
       jwt.verify(data.token, publicKey, function (err, decoded) {

@@ -4,8 +4,9 @@ const mongoose_delete = require('mongoose-delete')
 
 const PaymentSchema = new Schema({
     name: {type: String, required: true},
-    cardNumber: {type: String, required: true},
+    cardNumber: {type: Number, required: true, unique: true},
     releaseDate: {type: String, required: true},
+    expiresDate: {type: String, required: true},
     walletId: {type: Schema.Types.ObjectId, ref:'wallets', default: ''},
 }, {timestamps: true})
 

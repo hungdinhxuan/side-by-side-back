@@ -248,7 +248,7 @@ class RenterController {
       let renter = await Renter.insertMany(renters)
 
       for (let i = 0; i < renter.length; i++) {
-        wallets.push({ renterId: renter[i]._id })
+        wallets.push({ renterId: renter[i]._id, balance: 10000000 })
       }
       await Wallet.insertMany(wallets)
       // for(let i = 0; i < 1000; i++) {
