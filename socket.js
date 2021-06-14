@@ -100,7 +100,7 @@ module.exports = (io) => {
       /// Nếu mà player xác nhận thuê thì buộc cả 2 phải JOIN ROOM
       /// Gửi cho renter id của player
       io.to(socketIdSender).emit('CONFIRM_RENT_REQUEST', {
-        room: socket.User+ '--with--' + sender,
+        room: sender + '--with--' + socket.User,
       })
       /// Gửi cho player id của renter
       io.to(socket.id).emit('CONFIRM_RENT_REQUEST', {
@@ -114,6 +114,8 @@ module.exports = (io) => {
 
     /// Láy thông tin của giao dich thuê hiện tại cho người dùng trong room
     socket.on('GET_ROOM_INFO', (roomId) => {
+     
+
       for(let value of rentings){
         if(Object.values(value).includes(roomId) && Object.values(value).includes(socket.User)){
           socket.emit('GET_ROOM_INFO', value)
@@ -124,12 +126,7 @@ module.exports = (io) => {
     
 
     socket.on('JOIN_ROOM', (roomName) => {
-      let split = roomName.split('--with--') // ['username2', 'username1']
-
-      let unique = [...new Set(split)].sort((a, b) => (a < b ? -1 : 1)) // ['username1', 'username2']
-
-      let updatedRoomName = `${unique[0]}--with--${unique[1]}` // 'username1--with--username2'
-
+      
       console.log(socket.adapter.rooms)
       console.log(rentings)
 
@@ -141,7 +138,7 @@ module.exports = (io) => {
           socket.removeAllListeners('EMIT_MESSEGES')
         })
 
-      socket.join(updatedRoomName)
+      socket.join(roomName)
 
       socket.on('EMIT_MESSEGES', (message) => {
         Array.from(socket.rooms)
