@@ -85,13 +85,17 @@ module.exports = (io) => {
         [...activateUser].indexOf(sender)
       ]
       console.log(time, price)
-      // for(let value of rentings){
-      //   console.log(value)
-      //   if(!Object.values(value).includes(socket.User)){
-      //     rentings.add({renter: sender, player: socket.User, time: time.split(' ')[0] * 1 * 60 * 60, price: price})
-      //   }
-      // }
-      rentings.add({renter: sender, player: socket.User, time: time.split(' ')[0] * 1 * 60 * 60, price: price})
+      if([...rentings].length === 0) {
+        rentings.add({renter: sender, player: socket.User, time: time.split(' ')[0] * 1 * 60 * 60, price: price, room: `${sender}--with--${socket.User}`})
+      }
+      for(let value of rentings){
+        console.log(value)
+        /// Nếu mà player đó chưa được thuê thì thêm vào rentings
+        if(!Object.values(value).includes(socket.User)){
+          rentings.add({renter: sender, player: socket.User, time: time.split(' ')[0] * 1 * 60 * 60, price: price, room: `${sender}--with--${socket.User}`})
+        }
+      }
+      
       /// Nếu mà player xác nhận thuê thì buộc cả 2 phải JOIN ROOM
       /// Gửi cho renter id của player
       io.to(socketIdSender).emit('CONFIRM_RENT_REQUEST', {
@@ -106,6 +110,16 @@ module.exports = (io) => {
     socket.on('RENTING', () => {
       socket.emit('RENTING', [...rentings])
     })
+
+    /// Láy thông tin của giao dich thuê hiện tại cho người dùng trong room
+    socket.on('GET_ROOM_INFO', (roomId) => {
+      for(let value of rentings){
+        if(Object.values(value).includes(roomId) && Object.values(value).includes(socket.User)){
+          socket.emit('GET_ROOM_INFO', value)
+        }
+      }
+    })
+   
     
 
     socket.on('JOIN_ROOM', (roomName) => {
@@ -116,6 +130,7 @@ module.exports = (io) => {
       let updatedRoomName = `${unique[0]}--with--${unique[1]}` // 'username1--with--username2'
 
       console.log(socket.adapter.rooms)
+      console.log(rentings)
 
 
       Array.from(socket.rooms)
