@@ -45,3 +45,16 @@ exports.Create = async (req, res, next) => {
       .join({ success: false, message: 'Internal Server Error' })
   }
 }
+
+
+exports.FetchInfo = async (req, res, next) => {
+  try {
+    const wallet = await Wallet.findOne({renterId: req.user})
+    const payments = await Payment.find({walletId: wallet._id})
+    return res.json({success: true, payments})
+  } catch (error) {
+    return res
+      .status(500)
+      .join({ success: false, message: 'Internal Server Error' })
+  }
+}
