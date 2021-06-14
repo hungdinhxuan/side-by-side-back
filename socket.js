@@ -33,7 +33,7 @@ module.exports = (io) => {
       console.log('user disconnected')
       activateSocketId.delete(socket.id)
       activateUser.delete(socket.User)
-      socket.removeAllListeners()
+      // socket.removeAllListeners()
     })
 
     socket.on('EMIT_AVATAR', async () => {
@@ -137,7 +137,7 @@ module.exports = (io) => {
         .filter((it) => it !== socket.id)
         .forEach((id) => {
           socket.leave(id)
-          socket.removeAllListeners()
+          socket.removeAllListeners('EMIT_MESSEGES')
         })
 
       socket.join(updatedRoomName)
