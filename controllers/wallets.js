@@ -22,6 +22,20 @@ exports.Deposit = async (req, res) => {
  }  
 }
 
+exports.FetchInfo = async (req, res) => {
+    try {
+        const wallet = await Wallet.findOne({renterId: req.user})
+        return res.json({success: true, wallet})
+    } catch (error) {
+        return res.status(500).json({success: false, message: 'Internal Server Error'})
+    }
+}
+
 exports.Widthdraw = (req, res ) => {
+
+}
+
+
+exports.Pay = () => {
 
 }
