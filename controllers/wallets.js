@@ -18,7 +18,7 @@ exports.Deposit = async (req, res) => {
        wallet = await Wallet.findOneAndUpdate({renterId: req.user}, {balance: newBalance})
 
       console.log( newBalance)
-      return res.json({ success: true, message: 'Nạp tiền thành công' })
+      return res.json({ success: true, message: 'Nạp tiền thành công',  newBalance: newBalance.balance})
     
   } catch (error) {
     return res
