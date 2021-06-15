@@ -3,68 +3,81 @@ const PAGE_SIZE = 50
 const argon2 = require('argon2')
 const WalletsController = require('./wallets')
 const Wallet = require('../models/Wallet')
-const {uploadSingle} = require('./uploadImages')
+const { uploadSingle } = require('./uploadImages')
 const multer = require('multer')
 const fs = require('fs')
 const path = require('path')
 const girlNames = require('../girlNames')
 
 class RenterController {
-    uploadAvatar(req, res, next) {
+  uploadAvatar(req, res, next) {
     uploadSingle(req, res, async function (err) {
       var files
       try {
-         files = await fs.readdirSync(__dirname)
-         
+        files = await fs.readdirSync(__dirname)
       } catch (error) {
-        return res.status(500).json({success: false, message: 'Internal Server Error', error: error})
+        return res
+          .status(500)
+          .json({
+            success: false,
+            message: 'Internal Server Error',
+            error: error,
+          })
       }
-      
+
       if (err instanceof multer.MulterError) {
         // A Multer error occurred when uploading.
         console.log(err)
-        
-        return res.status(400).json({success: false, err, message: 'error1', files})
+
+        return res
+          .status(400)
+          .json({ success: false, err, message: 'File không hợp lệ vui lòng kiểm tra lại ', files })
       } else if (err) {
         // An unknown error occurred when uploading.
         console.log(err)
-        return res.status(400).json({success: false, err, message: 'error2', files})
+        return res
+          .status(400)
+          .json({ success: false, err, message: 'Lỗi không xác định vui lòng thử lại sau', files })
       }
-   
+
       // Everything went fine.
       console.log(req.user)
       console.log(req.file)
       var renter
       try {
-        renter = await Renter.findById(req.user)  
+        renter = await Renter.findById(req.user)
       } catch (error) {
         fs.futimesSync(req.file.path)
-        return res.status(500).json({success: false, message: 'Internal Server Error'})
+        return res
+          .status(500)
+          .json({ success: false, message: 'Internal Server Error' })
       }
-      
+
       // Xóa thư mục cũ
       try {
         fs.unlinkSync(renter.avatar)
-      } catch (error) {
-        
-      }
+      } catch (error) {}
 
       // Update
       try {
-        renter = await Renter.findByIdAndUpdate(req.user, {avatar:  path.join(__dirname, `../public/images/${req.file.filename}`)})
-        return res.json({success: true, message: 'ok', path: path.join(__dirname, `../public/images/${req.file.filename}`)})
+        renter = await Renter.findByIdAndUpdate(req.user, {
+          avatar: path.join(__dirname, `../public/images/${req.file.filename}`),
+        })
+        return res.json({
+          success: true,
+          message: 'ok',
+          path: path.join(__dirname, `../public/images/${req.file.filename}`),
+        })
       } catch (error) {
-        
-        return res.status(500).json({success: false, message: 'Internal Server Error'})
+        return res
+          .status(500)
+          .json({ success: false, message: 'Internal Server Error' })
       }
-
     })
   }
 
-  async rent(req, res) {
-    
-  }
-  
+  async rent(req, res) {}
+
   async get(req, res) {
     // const page = req.query.page
 
@@ -190,10 +203,14 @@ class RenterController {
 
     console.log({ id, name, gender, birthDate, nickName, city, nation })
     try {
-      const renter = await Renter.findByIdAndUpdate(
-        id,
-        { name, gender: gender, birthDate, nickName, city, nation: nation }
-      )
+      const renter = await Renter.findByIdAndUpdate(id, {
+        name,
+        gender: gender,
+        birthDate,
+        nickName,
+        city,
+        nation: nation,
+      })
       return res
         .status(206)
         .json({ success: true, message: 'Cập nhật thành công' })

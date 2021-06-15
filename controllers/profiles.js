@@ -1,7 +1,72 @@
 const Profile = require('../models/Profile')
 const Player = require('../models/Player')
+const multer = require('multer')
+const { uploadMultiple } = require('./uploadImages')
+const path = require('path')
 
 class ProfileController {
+  async uploadAlbumPhotos(req, res, next) {
+    uploadMultiple(req, res, async function (err) {
+      if (err instanceof multer.MulterError) {
+        // A Multer error occurred when uploading.
+        console.log(err)
+
+        return res
+          .status(400)
+          .json({
+            success: false,
+            err,
+            message: 'File quá lớn !! Chỉ có thể tải lên tối đa 5MB mỗi lần',
+          })
+      } else if (err) {
+        // An unknown error occurred when uploading.
+        console.log(err)
+        return res
+          .status(400)
+          .json({
+            success: false,
+            err,
+            message: 'Lỗi không xác định vui lòng thử lại sau',
+          })
+      }
+
+      try {
+        const pathFile = []
+        for (let i = 0; i < req.files.length; i++) {
+          pathFile.push(
+            path.join(__dirname, `../public/images/${req.files[i].filename}`)
+          )
+          console.log( req.files[i])
+        }
+        const player = await Player.findOne({renterId: req.user})
+        const profile = await Profile.updateOne(
+          { playerId: player._id },
+          { $push: { albums: pathFile } }
+        )
+        // console.log(req.files[0].filename)
+        return res.json({
+          success: true,
+          message: 'Uploaded successfully',
+          profile,
+        })
+        //   Player.updateOne(
+        //   { renterId: req.user },
+        //   { $push: { albums: ["New York"] } },
+        //   function(err, result) {
+        //     if (err) {
+        //       res.send(err)
+        //     } else {
+        //       res.send(result)
+        //     }
+        //   }
+        // )
+      } catch (error) {
+        return res
+          .status(500)
+          .json({ success: false, message: 'Internal Server Error' })
+      }
+    })
+  }
   async get(req, res, next) {
     const {id} = req.query
     if(id) {

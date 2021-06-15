@@ -19,4 +19,11 @@ router.delete('/destroy',  PlayerController.destroy)
 // @access public
 router.get('/', PlayerController.get)
 
+
+
+// @route GET /api/player/upload-albums
+// @desc get all Player
+// @access private
+// router.post('/upload-albums', verify, PlayerController.uploadAlbumPhotos)
+
 module.exports = router

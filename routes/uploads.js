@@ -2,7 +2,8 @@ const express = require('express')
 const router = express.Router()
 const multer = require('multer')
 const path = require('path')
-const {destination} = require('../config')
+const { destination } = require('../config')
+const {uploadMultiple} = require('../controllers/uploadImages')
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -46,8 +47,14 @@ router.post('/single', (req, res, next) => {
 
     // Everything went fine.
     console.log(req.file)
-    return res.json({ success: true , message: 'File uploaded successfully'})
+    return res.json({ success: true, message: 'File uploaded successfully' })
   })
+})
+
+
+router.post('/multiple', uploadMultiple, (req, res) => {
+  console.log(req.files)
+  return res.json({ success: true, message: 'Multple files uploaded successfully' })
 })
 
 module.exports = router

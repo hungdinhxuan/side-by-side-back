@@ -4,6 +4,7 @@ const mongoose_delete = require('mongoose-delete')
 
 const ProfileSchema = new Schema({
     displayName: {type: String},
+    albums: [],
     shortDescribe: {type: String},
     detailDescribe: {type: String},
     linkHightLight: {type: String},
