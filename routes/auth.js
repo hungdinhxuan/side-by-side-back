@@ -7,10 +7,9 @@ require('dotenv').config()
 const passport = require('passport')
 const {privateKey} = require('../config')
 const jwt = require('jsonwebtoken')
-
 const sendMail = require('../controllers/sendMail')
-
 const { ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD, MAIL_HOST, MAIL_PORT } = process.env
+
 
 router.get('/login/failure', (req, res) => {
   return res.status(401).json({success: false, message: 'Tên đăng nhập hoặc mật khẩu không đúng'})
@@ -23,6 +22,7 @@ router.post('/login', passport.authenticate('local', {failureRedirect: '/api/aut
   const token = jwt.sign({ renterId: req.user._id }, privateKey, {
     algorithm: 'RS256',
   })
+  console.log(req.session)
   return res.json({
     success: true,
     message: 'Login successful',

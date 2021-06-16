@@ -6,7 +6,7 @@ const citiesRouter = require('./cities')
 const uploadsRouter = require('./uploads')
 const paymentsRouter = require('./payments')
 const walletsRouter = require('./wallets')
-
+const managementRouter = require('./management')
 
 module.exports = (app) => {
     app.use('/api/renter', rentersRouter)
@@ -17,4 +17,5 @@ module.exports = (app) => {
     app.use('/api/upload', uploadsRouter)
     app.use('/api/payment', paymentsRouter)
     app.use('/api/wallet', walletsRouter)
+    app.use('/api/management', managementRouter)
 }

@@ -123,15 +123,33 @@ class PlayerController {
     }
   }
   update(req, res, next) {}
-  delete(req, res, next) {
-    Player.deleteOne({ _id: req.id })
-      .then((player) => {
-        res.json({ success: `Deleted ${player}` })
-      })
-      .catch((err) => {
-        res.status(500).json({ err })
-      })
+  async delete(req, res, next) {
+    try {
+      const player = await Player.delete({_id: req.body._id})
+      return res.json({success: true, message: 'Xóa thành công'})
+    } catch (error) {
+      return res.status(500).json({success: false, message: 'Internal Server Error'})
+    }
   }
+
+  async forceDelete(req, res){
+    try {
+      const player = await Player.deleteOne({_id: req.body._id})
+      return res.json({success: true, message: 'Xóa thành công'})
+    } catch (error) {
+      return res.status(500).json({success: false, message: 'Internal Server Error'})
+    }
+  }
+
+  async Restore(req, res){
+    try {
+      const player = await Player.restore({_id: req.body._id})
+      return res.json({success: true, message: 'Khôi phục thành công'})
+    } catch (error) {
+      return res.status(500).json({success: false, message: 'Internal Server Error'})
+    }
+  }
+
 
   async destroy(req, res) {
     try {

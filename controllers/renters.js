@@ -225,15 +225,51 @@ class RenterController {
   async patchSecurity(req, res) {}
 
   put(req, res) {}
-  delete(req, res, next) {
-    Renter.deleteOne({ _id: req.id })
-      .then((renter) => {
-        res.json({ success: `Deleted ${renter}` })
-      })
-      .catch((err) => {
-        res.status(500).json({ error: 'Server error' })
-      })
+  async delete(req, res, next) {
+    try {
+      const renter = await Renter.delete({_id: req.body._id})
+      return res.json({success: true, message: 'Xóa thành công'})
+    } catch (error) {
+      return res.status(500).json({success: false, message: 'Internal Server Error'})
+    }
   }
+
+  async forceDelete(req, res){
+    try {
+      const renter = await Renter.deleteOne({_id: req.body._id})
+      return res.json({success: true, message: 'Xóa thành công'})
+    } catch (error) {
+      return res.status(500).json({success: false, message: 'Internal Server Error'})
+    }
+  }
+
+  async Restore(req, res){
+    try {
+      const renter = await Renter.restore({_id: req.body._id})
+      return res.json({success: true, message: 'Khôi phục thành công'})
+    } catch (error) {
+      return res.status(500).json({success: false, message: 'Internal Server Error'})
+    }
+  }
+
+  async FetchAll(req, res){
+    try {
+      if(req.role < 2){
+        const renters = await Renter.find({role: {$lt: 2}})
+        return res.json({ success: true, renters})
+      }else{
+        const renters = await Renter.find({})
+        return res.json({ success: true, renters})
+      }  
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Internal Server Error',
+        error: error,
+      })
+    }
+  }
+
   async destroy(req, res) {
     try {
       const renter = await Renter.remove({})
