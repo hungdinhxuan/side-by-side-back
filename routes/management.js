@@ -11,6 +11,7 @@ router.post('/role', CreateRole)
 // Renter management
 router.get('/renter', rentersController.FetchAll)
 router.patch('/renter/:id', rentersController.delete)
+router.put('/renter', rentersController.put)
 router.delete('/renter/:id/force', rentersController.forceDelete)
 router.patch('/renter/:id/restore', rentersController.Restore)
 

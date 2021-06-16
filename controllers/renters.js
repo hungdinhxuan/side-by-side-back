@@ -27,25 +27,21 @@ class RenterController {
         // A Multer error occurred when uploading.
         console.log(err)
 
-        return res
-          .status(400)
-          .json({
-            success: false,
-            err,
-            message: 'File không hợp lệ vui lòng kiểm tra lại ',
-            files,
-          })
+        return res.status(400).json({
+          success: false,
+          err,
+          message: 'File không hợp lệ vui lòng kiểm tra lại ',
+          files,
+        })
       } else if (err) {
         // An unknown error occurred when uploading.
         console.log(err)
-        return res
-          .status(400)
-          .json({
-            success: false,
-            err,
-            message: 'Lỗi không xác định vui lòng thử lại sau',
-            files,
-          })
+        return res.status(400).json({
+          success: false,
+          err,
+          message: 'Lỗi không xác định vui lòng thử lại sau',
+          files,
+        })
       }
 
       // Everything went fine.
@@ -151,6 +147,48 @@ class RenterController {
     }
   }
 
+  async put(req, res) {
+    let { _id, username, email, password, name, nickName, role, city } =
+      req.body
+    nickName = nickName || ''
+    city = city || 'Hồ Chí Minh'
+    try {
+      let renter = await Renter.findOne({ username })
+      if (renter) {
+        return res.status(406).json({
+          success: false,
+          message: 'Username is already existed',
+        })
+      }
+      renter = await Renter.findOne({ email })
+      console.log(renter)
+      if (renter) {
+        return res
+          .status(406)
+          .json({ success: false, message: 'Email is already existed' })
+      }
+
+      password = await argon2.hash(password)
+      console.log('here' + password)
+      const newRenter = await Renter.findByIdAndUpdate(_id, {
+        username,
+        email,
+        password,
+        name,
+        nickName,
+        role,
+        city,
+      })
+      return res
+        .status(201)
+        .json({ success: true, message: 'Cập nhật thành công', newRenter })
+    } catch (error) {
+      return resWallet
+        .status(500)
+        .json({ success: false, message: 'Internal Server Error' })
+    }
+  }
+
   async post(req, res) {
     let { username, email, password, name, gender } = req.body
     console.log(req.body)
@@ -231,8 +269,6 @@ class RenterController {
   }
 
   async patchSecurity(req, res) {}
-
-  put(req, res) {}
   async delete(req, res, next) {
     try {
       const renter = await Renter.delete({ _id: req.body._id })
@@ -274,10 +310,8 @@ class RenterController {
     try {
       const { page } = req.query
       let skip = (page - 1) * PAGE_SIZE
-      const renters = await Renter.find({})
-        .skip(skip)
-        .limit(PAGE_SIZE)
-        
+      const renters = await Renter.find({}).skip(skip).limit(PAGE_SIZE)
+
       return res.json({ success: true, renters })
       // }else{
       //   const renters = await Renter.find({})
