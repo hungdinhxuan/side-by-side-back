@@ -16,13 +16,11 @@ class RenterController {
       try {
         files = await fs.readdirSync(__dirname)
       } catch (error) {
-        return res
-          .status(500)
-          .json({
-            success: false,
-            message: 'Internal Server Error',
-            error: error,
-          })
+        return res.status(500).json({
+          success: false,
+          message: 'Internal Server Error',
+          error: error,
+        })
       }
 
       if (err instanceof multer.MulterError) {
@@ -31,13 +29,23 @@ class RenterController {
 
         return res
           .status(400)
-          .json({ success: false, err, message: 'File không hợp lệ vui lòng kiểm tra lại ', files })
+          .json({
+            success: false,
+            err,
+            message: 'File không hợp lệ vui lòng kiểm tra lại ',
+            files,
+          })
       } else if (err) {
         // An unknown error occurred when uploading.
         console.log(err)
         return res
           .status(400)
-          .json({ success: false, err, message: 'Lỗi không xác định vui lòng thử lại sau', files })
+          .json({
+            success: false,
+            err,
+            message: 'Lỗi không xác định vui lòng thử lại sau',
+            files,
+          })
       }
 
       // Everything went fine.
@@ -227,40 +235,54 @@ class RenterController {
   put(req, res) {}
   async delete(req, res, next) {
     try {
-      const renter = await Renter.delete({_id: req.body._id})
-      return res.json({success: true, message: 'Xóa thành công'})
+      const renter = await Renter.delete({ _id: req.body._id })
+      return res.json({ success: true, message: 'Xóa thành công' })
     } catch (error) {
-      return res.status(500).json({success: false, message: 'Internal Server Error'})
+      return res
+        .status(500)
+        .json({ success: false, message: 'Internal Server Error' })
     }
   }
 
-  async forceDelete(req, res){
+  async forceDelete(req, res) {
     try {
-      const renter = await Renter.deleteOne({_id: req.body._id})
-      return res.json({success: true, message: 'Xóa thành công'})
+      const renter = await Renter.deleteOne({ _id: req.body._id })
+      return res.json({ success: true, message: 'Xóa thành công' })
     } catch (error) {
-      return res.status(500).json({success: false, message: 'Internal Server Error'})
+      return res
+        .status(500)
+        .json({ success: false, message: 'Internal Server Error' })
     }
   }
 
-  async Restore(req, res){
+  async Restore(req, res) {
     try {
-      const renter = await Renter.restore({_id: req.body._id})
-      return res.json({success: true, message: 'Khôi phục thành công'})
+      const renter = await Renter.restore({ _id: req.body._id })
+      return res.json({ success: true, message: 'Khôi phục thành công' })
     } catch (error) {
-      return res.status(500).json({success: false, message: 'Internal Server Error'})
+      return res
+        .status(500)
+        .json({ success: false, message: 'Internal Server Error' })
     }
   }
 
-  async FetchAll(req, res){
+  async FetchAll(req, res) {
+    // try {
+    //   const {page} = req.query
+    //   if(req.role < 2){
+    //     const renters = await Renter.find({role: {$lt: 2}})
     try {
-      if(req.role < 2){
-        const renters = await Renter.find({role: {$lt: 2}})
-        return res.json({ success: true, renters})
-      }else{
-        const renters = await Renter.find({})
-        return res.json({ success: true, renters})
-      }  
+      const { page } = req.query
+      let skip = (page - 1) * PAGE_SIZE
+      const renters = await Renter.find({})
+        .skip(skip)
+        .limit(PAGE_SIZE)
+        
+      return res.json({ success: true, renters })
+      // }else{
+      //   const renters = await Renter.find({})
+      //   return res.json({ success: true, renters})
+      // }
     } catch (error) {
       return res.status(500).json({
         success: false,
