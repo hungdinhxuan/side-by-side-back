@@ -12,6 +12,7 @@ module.exports = (io) => {
   } = require('./controllers/notifications')
 
   const messeges = []
+  const Wallet = require('./models/Wallet')
   const rentings = new Set()
 
   io.on('connection', (socket) => {
@@ -79,18 +80,30 @@ module.exports = (io) => {
         if(canSend){
 
           const renter = await Renter.findById(socket.User)
-          socket.emit('SENDER_NOTIFICATION', { response: 'Gui thanh cong' })
-          const socketIdReceiver = [...activateSocketId][
-            [...activateUser].indexOf(receiver)
-          ]
-          console.log(socketIdReceiver)
-          io.to(socketIdReceiver).emit('RECEIVER_NOTIFICATION', {
-            response: `${renter.name} muốn thuê bạn chơi cùng trong vòng ${time} với giá là ${cost}`,
-            sender: socket.User,
-            time, 
-            price: cost
-          })
+          const rentMoney = Number(cost.split('vnd')[0].split(',').join(''))
+          const walletOfRenter = await Wallet.findOne({renterId: socket.User})
+          if([...activateUser].includes(receiver)){
 
+            if(walletOfRenter.balance < rentMoney) {
+              socket.emit('SENDER_NOTIFICATION', { response: 'Bạn không có đủ tiền để thực hiện giao dịch này !! Vui lòng nạp thêm tiền!!' })  
+            }
+            else{
+              socket.emit('SENDER_NOTIFICATION', { response: 'Gui thanh cong' })
+              const socketIdReceiver = [...activateSocketId][
+                [...activateUser].indexOf(receiver)
+              ]
+              console.log(socketIdReceiver)
+              io.to(socketIdReceiver).emit('RECEIVER_NOTIFICATION', {
+                response: `${renter.name} muốn thuê bạn chơi cùng trong vòng ${time} với giá là ${cost}`,
+                sender: socket.User,
+                time, 
+                price: cost
+              })
+            }
+          }else{
+            socket.emit('SENDER_NOTIFICATION', { response: 'Hiện người chơi này không online!! Vui lòng thử lại sau' })  
+          }
+         
         }else{
           socket.emit('SENDER_NOTIFICATION', { response: 'Player này hiện tại đang được thuê !!!' })
         }
