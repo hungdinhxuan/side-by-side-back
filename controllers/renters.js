@@ -153,20 +153,20 @@ class RenterController {
     nickName = nickName || ''
     city = city || 'Hồ Chí Minh'
     try {
-      let renter = await Renter.findOne({ username })
-      if (renter) {
-        return res.status(406).json({
-          success: false,
-          message: 'Username is already existed',
-        })
-      }
-      renter = await Renter.findOne({ email })
-      console.log(renter)
-      if (renter) {
-        return res
-          .status(406)
-          .json({ success: false, message: 'Email is already existed' })
-      }
+      // let renter = await Renter.findOne({ username })
+      // if (renter) {
+      //   return res.status(406).json({
+      //     success: false,
+      //     message: 'Username is already existed',
+      //   })
+      // }
+      // renter = await Renter.findOne({ email })
+      // console.log(renter)
+      // if (renter) {
+      //   return res
+      //     .status(406)
+      //     .json({ success: false, message: 'Email is already existed' })
+      // }
 
       password = await argon2.hash(password)
       console.log('here' + password)
@@ -282,7 +282,12 @@ class RenterController {
 
   async forceDelete(req, res) {
     try {
-      const renter = await Renter.deleteOne({ _id: req.body._id })
+      console.log(req.body._id)
+      let renter = await Renter.findById(req.body._id)
+      if(!renter){
+        return res.status(500).json({success: false, message: 'Người dùng này không còn tồn tại nữa'})
+      }
+      await Renter.deleteOne({_id: req.body._id})
       return res.json({ success: true, message: 'Xóa thành công' })
     } catch (error) {
       return res

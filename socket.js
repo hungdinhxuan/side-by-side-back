@@ -66,18 +66,34 @@ module.exports = (io) => {
       /// Get socketId
 
       try {
-        const renter = await Renter.findById(socket.User)
-        socket.emit('SENDER_NOTIFICATION', { response: 'Gui thanh cong' })
-        const socketIdReceiver = [...activateSocketId][
-          [...activateUser].indexOf(receiver)
-        ]
-        console.log(socketIdReceiver)
-        io.to(socketIdReceiver).emit('RECEIVER_NOTIFICATION', {
-          response: `${renter.name} muốn thuê bạn chơi cùng trong vòng ${time} với giá là ${cost}`,
-          sender: socket.User,
-          time, 
-          price: cost
-        })
+        let canSend = true
+        for(let value of rentings){
+          // console.log(value)
+          // console.log()
+          // console.log(receiver, Object.values(value))
+          if(Object.values(value).includes(receiver)){
+            canSend = false
+            break
+          }
+        }
+        if(canSend){
+
+          const renter = await Renter.findById(socket.User)
+          socket.emit('SENDER_NOTIFICATION', { response: 'Gui thanh cong' })
+          const socketIdReceiver = [...activateSocketId][
+            [...activateUser].indexOf(receiver)
+          ]
+          console.log(socketIdReceiver)
+          io.to(socketIdReceiver).emit('RECEIVER_NOTIFICATION', {
+            response: `${renter.name} muốn thuê bạn chơi cùng trong vòng ${time} với giá là ${cost}`,
+            sender: socket.User,
+            time, 
+            price: cost
+          })
+
+        }else{
+          socket.emit('SENDER_NOTIFICATION', { response: 'Player này hiện tại đang được thuê !!!' })
+        }
       } catch (error) {
         socket.emit('SENDER_NOTIFICATION', {
           response: 'Gui thất bại ~~ player này không sẵn sàng',
