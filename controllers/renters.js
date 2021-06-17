@@ -1,7 +1,7 @@
 const Renter = require('../models/Renter')
 const PAGE_SIZE = 50
 const argon2 = require('argon2')
-const WalletsController = require('./wallets')
+const {CreateWallet} = require('./wallets')
 const Wallet = require('../models/Wallet')
 const { uploadSingle } = require('./uploadImages')
 const multer = require('multer')
@@ -191,7 +191,9 @@ class RenterController {
 
   async post(req, res) {
     let { username, email, password, name, gender } = req.body
-    console.log(req.body)
+    gender = gender || 'Nữ'
+    name = name || ''
+    console.log(username, email, password, name, gender)
     try {
       let renter = await Renter.findOne({ username })
       if (renter) {
@@ -201,7 +203,7 @@ class RenterController {
         })
       }
       renter = await Renter.findOne({ email })
-      console.log(renter)
+      
       if (renter) {
         return res
           .status(406)
@@ -209,20 +211,21 @@ class RenterController {
       }
 
       password = await argon2.hash(password)
-      console.log('here' + password)
+      
       let newRenter = await Renter.create({
         username,
         email,
         password,
         name,
-        genders: gender,
+        gender
       })
-      WalletsController.post(newRenter._id)
+      console.log(newRenter)
+      CreateWallet(newRenter._id)
       return res
         .status(201)
-        .json({ success: true, message: 'Sign up successful !' })
+        .json({ success: true, message: 'Sign up successful !', newRenter})
     } catch (error) {
-      return resWallet
+      return res
         .status(500)
         .json({ success: false, message: 'Internal Server Error' })
     }

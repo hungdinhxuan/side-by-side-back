@@ -38,6 +38,17 @@ exports.FetchInfo = async (req, res) => {
   }
 }
 
+exports.CreateWallet = async (renterId) => {
+  try {
+    const wallet = await Wallet.create({renterId, balance: 10000000})
+
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal Server Error' })
+  }
+}
+
 exports.Widthdraw = (req, res) => {}
 
 exports.Pay = () => {}
