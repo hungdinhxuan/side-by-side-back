@@ -1,42 +1,54 @@
-const wallets = require("../models/Wallet");
+const Wallet = require('../models/Wallet')
+const Payment = require('../models/Payment')
 
-class WalletController {
-  get(req, res, next) {
-    wallets
-      .find({})
-      .then((wallet) => {
-        res.json(wallet);
-      })
-      .catch((err) => {
-        res.json({ err });
-      });
-  }
-//   renterId : {type: String, required: true},
-//   Balance : {type: Number, default: 0},
-  post(req, res, next) {
-    wallets
-      .create({
-        renterId: req.body.renterId,
-        balance: req.body.balance,
-      })
-      .then((wallet) => {
-        res.json(`Created ${wallet}`);
-      })
-      .catch((err) => {
-        res.json(err);
-      });
-  }
-  update(req, res, next) {}
-  delete(req, res, next) {
-    wallets
-      .deleteOne({ _id: req.id })
-      .then((wallet) => {
-        res.json({ success: `Deleted ${wallet}` });
-      })
-      .catch((err) => {
-        res.json({ error: "Server error" });
-      });
+exports.Deposit = async (req, res) => {
+  const { paymentId, amount } = req.body
+  try {
+    const payment = await Payment.findById(paymentId)
+    if (!payment) {
+      return res
+        .status(403)
+        .json({
+          success: false,
+          message: 'Phương thức thanh toán không hợp lệ',
+        })
+    } 
+        let wallet = await Wallet.findOne({renterId: req.user})
+        const newBalance = parseInt(wallet.balance) + parseInt(amount)
+       wallet = await Wallet.findOneAndUpdate({renterId: req.user}, {balance: newBalance})
+
+      console.log( newBalance)
+      return res.json({ success: true, message: 'Nạp tiền thành công',  newBalance: newBalance.balance})
+    
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal Server Error' })
   }
 }
 
-module.exports = new WalletController();
+exports.FetchInfo = async (req, res) => {
+  try {
+    const wallet = await Wallet.findOne({ renterId: req.user })
+    return res.json({ success: true, wallet })
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal Server Error' })
+  }
+}
+
+exports.CreateWallet = async (renterId) => {
+  try {
+    const wallet = await Wallet.create({renterId, balance: 10000000})
+
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal Server Error' })
+  }
+}
+
+exports.Widthdraw = (req, res) => {}
+
+exports.Pay = () => {}

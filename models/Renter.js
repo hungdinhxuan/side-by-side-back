@@ -1,33 +1,40 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-const bcrypt = require('bcryptjs')
-const mongoose_delete = require('mongoose-delete');
+const mongoose_delete = require('mongoose-delete')
+const { getListCity } = require('../config')
 
+const RenterSchema = new Schema(
+  {
+    username: { type: String, unique: true, required: true, maxLength: 255 },
+    email: { type: String, unique: true, required: true, maxLength: 255 },
+    password: { type: String, required: true, maxLength: 255 },
+    name: { type: String, required: true, maxLength: 64 },
+    gender: {
+      type: String,
+      default: 'Khác',
+      enum: { values: ['Name', 'Nữ', 'Khác'] },
+    },
+    city: {
+      type: String,
+      default: 'Hồ Chí Minh',
+      enum: { values: getListCity },
+    },
+    nation: {
+      type: String,
+      default: 'Việt Nam',
+      enum: { values: ['Việt Nam'] },
+    },
+    birthDate: { type: Date, default: '2000-01-01' },
+    nickName: { type: String, default: '' },
+    avatar: { type: String, default: 'default-avatar.png' },
+    role: { type: Number, default: 0 },
+  },
+  { timestamps: true }
+)
 
-const RenterSchema = new Schema({
-    username: {type: String, unique: true, required: true, maxLength: 255},
-    email: {type: String, unique: true, required: true, maxLength: 255},
-    password: {type: String, required: true, maxLength: 255},
-    name: {type: String, required: true, maxLength: 64},
-    gender: {type: String, default: 'Khác'},
-    avatar: {type: String, default:'https://dc577.4shared.com/img/zLirxaRAiq/s25/17997bde090/default-avatar'}
-
-}, {timestamps: true})
-
-RenterSchema.plugin(mongoose_delete)
-
-RenterSchema.pre('save', async function(next){
-    try {
-        // Generate a salt (random string)
-        const salt = await bcrypt.genSalt(10)
-        const passwordHashed = await bcrypt.hash(this.password, salt)
-        this.password = passwordHashed
-        
-    }catch(err)
-    {
-        next(err)
-    }
+RenterSchema.plugin(mongoose_delete, {
+  overrideMethods: 'all',
+  deletedAt: true,
 })
-
 
 module.exports = mongoose.model('renters', RenterSchema)

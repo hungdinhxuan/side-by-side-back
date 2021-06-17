@@ -1,25 +1,44 @@
 const express = require('express')
 const router = express.Router()
 const renterController = require('../controllers/renters')
-const path = require('path')
 const verify = require('../middleware/verify')
-const renters = require('../models/Renter')
+const Renter = require('../models/Renter')
+const {uploadSingle} = require('../controllers/uploadImages')
 
-router.get('/', verify, renterController.get)
-router.post('/login', require('../controllers/login'))
-router.post('/register', renterController.post)
-router.get('/create', async (req, res) =>{
-    
-    for(var i = 0; i < 1000; i++){
-        try {
-            const renter = await renters.create({username: `renter${i}`, password: 'renter'})   
-        } catch (error) {
-            res.status(500).json({success: false, message: 'Internal server error', error})
-        }
+router.get('/all', async (req, res) =>{
+    try {
+        return res.json({renters: await Renter.find({})})
+    } catch (error) {
+        return res.status(500).json({success: false, message: 'Internal Server Error'})       
     }
-    return res.json({success: true, message: `Created successfully`})
 })
 
-router.get('/destroy', renterController.destroy)
+router.get('/:username', async (req, res) =>{
+    const {username} = req.params
+    try {
+        const renter = await Renter.findOne({_id: username})
+        return res.json({success: true, message: 'ok', renter})
+    } catch (error) {
+        return res.status(500).json({success: false, message: 'Internal Server Error'})       
+    }
+})
+
+
+router.get('/', verify, renterController.get)
+
+router.post('/upload-avatar', verify,  renterController.uploadAvatar)
+
+router.patch('/general', verify, renterController.patchGeneral)
+
+// @route POST /api/renter/create-sample
+// @desc create sample renters
+// @access public
+router.post('/create-sample', renterController.createSample)
+
+
+// @route DELETE /api/renter/destroy
+// @desc destroy all Renter
+// @access public
+router.delete('/destroy', renterController.destroy)
 
 module.exports = router

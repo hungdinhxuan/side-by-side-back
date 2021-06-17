@@ -1,16 +1,36 @@
-const express = require("express");
-const router = express.Router();
-const Renter = require("../models/Renter");
-const verify = require("../middleware/verify");
-const {register, googleLogin, forgotPassword, resetPassword} = require('../controllers/auth')
-require("dotenv").config();
-
-
+const express = require('express')
+const router = express.Router()
+const Renter = require('../models/Renter')
+const verify = require('../middleware/verify')
+const {register, googleLogin, forgotPassword, resetPassword, changePassword} = require('../controllers/auth')
+require('dotenv').config()
+const passport = require('passport')
+const {privateKey} = require('../config')
+const jwt = require('jsonwebtoken')
 const sendMail = require('../controllers/sendMail')
+const { ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD, MAIL_HOST, MAIL_PORT } = process.env
 
-const { ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD, MAIL_HOST, MAIL_PORT } = process.env;
 
-// @route /api/auth
+router.get('/login/failure', (req, res) => {
+  return res.status(401).json({success: false, message: 'Tên đăng nhập hoặc mật khẩu không đúng'})
+})
+// @route /api/auth/login
+// @ method: POST
+// @ access: public
+router.post('/login', passport.authenticate('local', {failureRedirect: '/api/auth/login/failure' }), (req, res) => {
+  
+  const token = jwt.sign({ renterId: req.user._id }, privateKey, {
+    algorithm: 'RS256',
+  })
+  console.log(req.session)
+  return res.json({
+    success: true,
+    message: 'Login successful',
+    token,
+  })
+})
+
+// @route /api/auth/register
 // @ method: POST
 // @ access: public
 router.post('/register', register)
@@ -18,14 +38,14 @@ router.post('/register', register)
 // @route /api/auth
 // @ method: POST
 // @ access: private
-router.get("/", verify, async (req, res) => {
+router.get('/', verify, async (req, res) => {
   try {
-    const renter = await Renter.findById(req.userId).select("-password");
-    return res.json({ success: true, renter });
+    const renter = await Renter.findById(req.userId).select('-password')
+    return res.json({ success: true, renter })
   } catch (error) {
     return res.json({success: false, message: 'Internal Server Error'})
   } 
-});
+})
 
 
 // @route /api/auth/facebook
@@ -68,9 +88,14 @@ router.post('/sendmail', async (req, res) => {
 router.post('/forgot-password', forgotPassword)
 
 // @route /api/auth/reset-password
-// @ method: GET
+// @ method: PATCH
 // @ access: public
-router.get('/reset-password', resetPassword)
+router.patch('/reset-password', resetPassword)
+
+// @route /api/auth/change-password
+// @ method: PATCH
+// @ access: private
+router.patch('/change-password', verify, changePassword)
 
 
 router.get('/search', async (req, res) => {
@@ -83,4 +108,4 @@ router.get('/search', async (req, res) => {
   }
 })
 
-module.exports = router;
+module.exports = router

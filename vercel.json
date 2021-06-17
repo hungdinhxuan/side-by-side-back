@@ -10,6 +10,8 @@
         {
             "src": "/(.*)",
             "dest": "/"
-        }
+            
+        },
+        {"src":"/api/upload", "methods": ["POST"], "dest": "./index.js"}
     ]
 }

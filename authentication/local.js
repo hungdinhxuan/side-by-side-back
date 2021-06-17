@@ -1,22 +1,24 @@
 module.exports = (app) => {
-  const passport = require("passport");
-  const LocalStrategy = require("passport-local").Strategy;
-  const Renter = require("../models/Renter");
-  const bcrypt = require("bcryptjs");
+  const passport = require('passport')
+  const argon2 = require('argon2')
+  const LocalStrategy = require('passport-local').Strategy
+  const Renter = require('../models/Renter')
+
   passport.use(
-    new LocalStrategy(function (username, password, done) {
-      Renter.findOne({ username: username }, function (err, renter) {
-        if (err) {
-          return done(err);
-        }
+    new LocalStrategy(async function (username, password, done) {
+      try {
+        const renter = await Renter.findOne({ username: username })
         if (!renter) {
-          return done(null, false);
+          return done(null, false)
         }
-        if (!bcrypt.compareSync(password, renter.password)) {
-          return done(null, false);
+        
+        if (!await argon2.verify(renter.password, password)) {
+          return done(null, false)
         }
-        return done(null, renter);
-      });
+        return done(null, renter)
+      } catch (error) {
+        return done(err)
+      }
     })
-  );
-};
+  )
+}

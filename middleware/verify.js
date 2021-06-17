@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
         }
         else
         {
-            console.log(decoded)
+            req.user = decoded.renterId
             next()
         }
       })
