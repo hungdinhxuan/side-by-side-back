@@ -300,6 +300,7 @@ class RenterController {
     }
   }
 
+
   async Restore(req, res) {
     try {
       const renter = await Renter.restore({ _id: req.body._id })
@@ -331,12 +332,14 @@ class RenterController {
         success: false,
         message: 'Internal Server Error',
         error: error,
+
       })
     }
   }
 
   async destroy(req, res) {
     try {
+
       const renter = await Renter.remove({})
       return res.json({ success: true, message: 'Removed Renter table' })
     } catch (error) {
@@ -389,6 +392,7 @@ class RenterController {
         message: 'Internal Server Error',
         error: error,
       })
+
     }
   }
 }
