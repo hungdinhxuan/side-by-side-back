@@ -291,7 +291,7 @@ class RenterController {
       if(!renter){
         return res.status(500).json({success: false, message: 'Người dùng này không còn tồn tại nữa'})
       }
-      await Renter.deleteOne({_id: req.body._id})
+      await Renter.deleteOne({_id: id})
       return res.json({ success: true, message: 'Xóa thành công' })
     } catch (error) {
       return res
