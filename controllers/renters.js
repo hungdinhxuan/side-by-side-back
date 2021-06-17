@@ -285,8 +285,9 @@ class RenterController {
 
   async forceDelete(req, res) {
     try {
-      console.log(req.body._id)
-      let renter = await Renter.findById(req.body._id)
+    
+      const {id} = req.params
+      let renter = await Renter.findById(id)
       if(!renter){
         return res.status(500).json({success: false, message: 'Người dùng này không còn tồn tại nữa'})
       }
