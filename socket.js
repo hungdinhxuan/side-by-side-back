@@ -14,6 +14,9 @@ module.exports = (io) => {
   const messeges = []
   const Wallet = require('./models/Wallet')
   const rentings = new Set()
+  const {SendMessage} = require('./controllers/messeges')
+  const {Transact} = require('./controllers/wallets')
+
 
   io.on('connection', (socket) => {
 
@@ -123,6 +126,10 @@ module.exports = (io) => {
       ]
       console.log(time, price)
       const d = new Date()
+
+      const rentMoney = Number(price.split('vnd')[0].split(',').join(''))
+      
+
       if([...rentings].length === 0) {
         rentings.add({renter: sender, player: socket.User, time: new Date( d.setTime(d.getTime() + 1000 * 60 * 60 * time.split(' ')[0] )), price: price, room: `${sender}--with--${socket.User}`})
       }
@@ -136,13 +143,24 @@ module.exports = (io) => {
       
       /// Nếu mà player xác nhận thuê thì buộc cả 2 phải JOIN ROOM
       /// Gửi cho renter id của player
-      io.to(socketIdSender).emit('CONFIRM_RENT_REQUEST', {
-        room: sender + '--with--' + socket.User,
-      })
-      /// Gửi cho player id của renter
-      io.to(socket.id).emit('CONFIRM_RENT_REQUEST', {
-        room: sender + '--with--' + socket.User,
-      })
+        console.log(rentMoney)
+        // const res = await Transact(sender, socket.User, rentMoney)
+        
+        const res = await Transact(sender, socket.User, rentMoney)
+        if(res){
+          io.to(socketIdSender).emit('CONFIRM_RENT_REQUEST', {
+            room: sender + '--with--' + socket.User,
+          })
+          /// Gửi cho player id của renter
+          io.to(socket.id).emit('CONFIRM_RENT_REQUEST', {
+            room: sender + '--with--' + socket.User,
+          })
+        }else{
+          console.log('ok')
+        }
+
+     
+      
     })
 
     socket.on('RENTING', () => {
@@ -164,8 +182,8 @@ module.exports = (io) => {
 
     socket.on('JOIN_ROOM', (roomName) => {
       
-      console.log(socket.adapter.rooms)
-      console.log(rentings)
+      // console.log(socket.adapter.rooms)
+      // console.log(rentings)
 
 
       Array.from(socket.rooms)
@@ -192,6 +210,28 @@ module.exports = (io) => {
     // })
 
     socket.on('HISTORY_MESSEGE', async (data) => {})
+    socket.on('SEND_MESSAGES', async (data) =>{
+      const {receiver, content} = data
+      if(socket.User){
+        const renter = await Renter.findById(receiver)
+        if(!renter){
+          // Nếu người nhận không phải là 1 player thì tìm kiếm xem receiver có phải là player không
+          const player = await Player.findById(receiver)
+          if(!player){
+            socket.emit('ON_SEND_MESSEGES', 'Opps ! Người chơi này không còn tồn tại nữa')
+          }else{
+            SendMessage(sender, player.renterId, content)
+            io.to(player.renterId).emit('SEND_MESSEGES', {sender, receiver: player.renterId, content})
+          }
+        }else{
+          // 
+          SendMessage(sender, receiver, content)
+          io.to(receiver).emit('SEND_MESSEGES', {sender, receiver, content})
+        }
+      }else{
+        socket.emit('ON_SEND_MESSEGES', 'Opps ! Bạn cần đăng nhập để thực hiện chức năng này !!!!')
+      }
+    })
 
     socket.on('GET_USERS', async () => {
       try {

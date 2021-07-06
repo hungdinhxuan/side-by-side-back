@@ -1,5 +1,6 @@
 const Wallet = require('../models/Wallet')
 const Payment = require('../models/Payment')
+const assert = require('assert')
 
 exports.Deposit = async (req, res) => {
   const { paymentId, amount } = req.body
@@ -51,4 +52,28 @@ exports.CreateWallet = async (renterId) => {
 
 exports.Widthdraw = (req, res) => {}
 
-exports.Pay = () => {}
+
+exports.Transact = async (senderId, receiverId, money) => {
+  try {
+    let senderWallet = await Wallet.findOne({renterId: senderId})
+    let receiverWallet = await Wallet.findOne({renterId: receiverId})
+  
+    if(parseInt(senderWallet.balance) < parseInt(money)){
+      console.log(senderWallet.balance )
+      return false
+    }else{
+      const newSenderBalance = parseInt(senderWallet.balance) - parseInt(money)
+      const newReceiverBalance = parseInt(receiverWallet.balance) + parseInt(money)
+      // assert(newSenderBalance !== null)
+      // assert(newReceiverBalance !== null)
+      senderWallet = await Wallet.findOneAndUpdate({renterId: senderId}, {balance: newSenderBalance})
+      receiverWallet = await Wallet.findOneAndUpdate({renterId: receiverId}, {balance: newReceiverBalance})
+      // console.log(senderWallet)
+      console.log(newSenderBalance)
+      return true
+    }
+  } catch (error) {
+    console.log(error)
+    return false
+  }
+}
