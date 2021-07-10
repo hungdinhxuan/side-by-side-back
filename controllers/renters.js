@@ -8,6 +8,8 @@ const multer = require('multer')
 const fs = require('fs')
 const path = require('path')
 const girlNames = require('../girlNames')
+const Player = require('../models/Player')
+const Profile = require('../models/Profile')
 
 class RenterController {
   uploadAvatar(req, res, next) {
@@ -291,7 +293,10 @@ class RenterController {
       if(!renter){
         return res.status(500).json({success: false, message: 'Người dùng này không còn tồn tại nữa'})
       }
+      const player = await Player.findOne({renterId: id})
       await Renter.deleteOne({_id: id})
+      await Player.deleteOne({renterId: id})
+      await Profile.deleteOne({playerId: player._id})
       return res.json({ success: true, message: 'Xóa thành công' })
     } catch (error) {
       return res
