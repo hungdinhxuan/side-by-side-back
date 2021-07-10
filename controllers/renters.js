@@ -225,6 +225,7 @@ class RenterController {
         .status(201)
         .json({ success: true, message: 'Sign up successful !', newRenter})
     } catch (error) {
+      console.log(error);
       return res
         .status(500)
         .json({ success: false, message: 'Internal Server Error' })
@@ -267,6 +268,7 @@ class RenterController {
       return res.status(500).json({
         success: false,
         message: 'Máy chủ gặp sự cố ! Vui lòng thử lại sau ít phút !',
+        error
       })
     }
   }

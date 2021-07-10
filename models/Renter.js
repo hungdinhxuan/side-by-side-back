@@ -12,7 +12,7 @@ const RenterSchema = new Schema(
     gender: {
       type: String,
       default: 'Khác',
-      enum: { values: ['Name', 'Nữ', 'Khác'] },
+      enum: { values: ['Nam', 'Nữ', 'Khác'] },
     },
     city: {
       type: String,
