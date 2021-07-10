@@ -6,7 +6,7 @@ const { publicKey, privateKey } = require('../config')
 const sendMail = require('./sendMail')
 const rentersController = require('./renters')
 const argon2 = require('argon2')
-
+const {CreateWallet} = require('./wallets')
 
 require('dotenv').config()
 
@@ -31,6 +31,8 @@ exports.googleLogin = async (req, res, next) => {
               name,
               avatar:picture,
             })
+            
+            CreateWallet(renter._id)
       }
       const token = jwt.sign({ renterId: renter._id }, privateKey, {
         algorithm: 'RS256',
